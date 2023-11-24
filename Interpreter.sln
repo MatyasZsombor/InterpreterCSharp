@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Interpreter", "Interpreter\Interpreter.csproj", "{0CA6090D-CE84-4686-9A7F-322A48E4E81F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTests", "UnitTests\UnitTests.csproj", "{5CF3A427-D55F-423A-AC99-EE6B959E8579}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0CA6090D-CE84-4686-9A7F-322A48E4E81F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0CA6090D-CE84-4686-9A7F-322A48E4E81F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0CA6090D-CE84-4686-9A7F-322A48E4E81F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0CA6090D-CE84-4686-9A7F-322A48E4E81F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5CF3A427-D55F-423A-AC99-EE6B959E8579}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5CF3A427-D55F-423A-AC99-EE6B959E8579}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5CF3A427-D55F-423A-AC99-EE6B959E8579}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5CF3A427-D55F-423A-AC99-EE6B959E8579}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
