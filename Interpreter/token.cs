@@ -1,80 +1,64 @@
-﻿public enum TokenType
+﻿namespace Interpreter;
+
+public enum TokenType
 {
-    ILLEGAL,
-    EOF,
-
-    IDENT,
-    INT,
-    STRING,
-
-    ASSIGN,
-    PLUS,
-    MINUS,
-    BANG,
-    ASTERISK,
-    SLASH,
-    EQ,
-    NOT_EQ,
-    AND,
-    OR,
-
-    LT,
-    GT,
-
-    COMMA,
-    SEMICOLON,
-
-    LPAREN,
-    RPAREN,
-    LBRACE,
-    RBRACE,
-    LBRACKET,
-    RBRACKET,
-
-    FUNCTION,
-    LET,
-    TRUE,
-    FALSE,
-    IF,
-    ELSE,
-    RETURN
+    Illegal,
+    Eof,
+    
+    Ident,
+    Int,
+    String,
+    
+    Assign,
+    Plus,
+    Minus,
+    Bang,
+    Asterisk,
+    Slash,
+    Eq,
+    NotEq,
+    And,
+    Or,
+    
+    Lt,
+    Gt,
+    
+    Comma,
+    Semicolon,
+    
+    Lparen,
+    Rparen,
+    Lbrace,
+    Rbrace,
+    Lbracket,
+    Rbracket,
+    
+    Function,
+    Let,
+    True,
+    False,
+    If,
+    Else,
+    Return
 }
 
 public struct Token
 {
     public TokenType Type { get; set; }
     public string Literal { get; set; }
-
-    public TokenType LookUpIdent(string ident)
+    
+    public static TokenType LookUpIdent(string ident)
     {
-        if (ident == "let")
-        {
-            return TokenType.LET;
-        }
-        else if (ident == "fn")
-        {
-            return TokenType.FUNCTION;
-        }
-        else if (ident == "true")
-        {
-            return TokenType.TRUE;
-        }
-        else if (ident == "false")
-        {
-            return TokenType.FALSE;
-        }
-        else if (ident == "if")
-        {
-            return TokenType.IF;
-        }
-        else if (ident == "else")
-        {
-            return TokenType.ELSE;
-        }
-        else if (ident == "return")
-        {
-            return TokenType.RETURN;
-        }
-        return TokenType.IDENT;
+        return ident switch
+               {
+                   "let"    => TokenType.Let,
+                   "fn"     => TokenType.Function,
+                   "true"   => TokenType.True,
+                   "false"  => TokenType.False,
+                   "if"     => TokenType.If,
+                   "else"   => TokenType.Else,
+                   "return" => TokenType.Return,
+                   _        => TokenType.Ident
+               };
     }
 }
