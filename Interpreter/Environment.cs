@@ -1,37 +1,31 @@
-﻿using System;
-using System.Diagnostics.Metrics;
-
-namespace Interpreter
+﻿namespace Interpreter
 {
     public class Environment
     {
-        private Environment outer = null;
+        private Environment? _outer;
 
-        private readonly Dictionary<string, EvObject> store = new Dictionary<string, EvObject>();
+        private readonly Dictionary<string, IEvObject> _store = new();
 
-        public (EvObject, bool) Get(string name)
+        public (IEvObject?, bool) Get(string name)
         {
-            if (store.ContainsKey(name))
-                return (store[name], true);
-
-            if (!store.ContainsKey(name) && outer != null)
+            if (_store.TryGetValue(name, out var value))
             {
-                return outer.Get(name);
+                return (value, true);
+            }
+            
+            if (!_store.ContainsKey(name) && _outer != null)
+            {
+                return _outer.Get(name);
             }
 
             return (null, false);
         }
 
-        public EvObject Set(string name, EvObject obj)
+        public void Set(string name, IEvObject obj)
         {
-            store[name] = obj;
-            return obj;
+            _store[name] = obj;
         }
 
-        public static Environment NewEnclosedEnvironment(Environment outer)
-        {
-            return new Environment { outer = outer };
-        }
-
+        public static Environment NewEnclosedEnvironment(Environment outer) => new() { _outer = outer };
     }
 }
