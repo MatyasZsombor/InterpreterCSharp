@@ -1,123 +1,115 @@
-﻿using System;
-using static System.Net.Mime.MediaTypeNames;
+﻿namespace Interpreter;
 
-namespace Interpreter
+public static class Repl
 {
-	public class REPL
-	{
-		private static void Main()
-		{
-            int code = int.Parse("1F435", System.Globalization.NumberStyles.HexNumber);
-            string unicodeString = char.ConvertFromUtf32(code);
-
-            Console.WriteLine("Monkey 1.0 " + unicodeString);
-
-            Console.Write("Do you want to execute a file, or use the REPL? (1 for file execution, 2 for REPL): ");
-            string input = Console.ReadLine();
-
-            if (input == "exit" || input == "e")
-            {
-                return;
-            }
-            else if(input == "1")
-            {
-                ExecuteFile();
-            }
-            else
-            {
-                DOREPL();
-            }
-		}
-
-        public static void PrintParserErrors(Parser parser)
+    private static void Main()
+    {
+        int code = int.Parse("1F435", System.Globalization.NumberStyles.HexNumber);
+        string unicodeString = char.ConvertFromUtf32(code);
+        
+        Console.WriteLine("Monkey 1.0 " + unicodeString);
+        
+        Console.Write("Do you want to execute a file, or use the REPL? (1 for file execution, 2 for REPL): ");
+        string input = Console.ReadLine()!;
+        
+        switch (input)
         {
-            List<string> errors = parser.errors;
-            Console.WriteLine($"Parser errors:");
-            foreach (var item in errors)
-            {
-                Console.WriteLine($"\t{item}");
-            }
+            case "exit":
+            case "e":
+                return;
+            case "1":
+                ExecuteFile();
+                break;
+            default:
+                DoRepl();
+                break;
+        }
+    }
+    
+    public static void PrintParserErrors(Parser parser)
+    {
+        List<string> errors = parser.errors;
+        Console.WriteLine("Parser errors:");
+        foreach (var item in errors)
+        {
+            Console.WriteLine($"\t{item}");
+        }
+    }
+    
+    private static void ExecuteFile()
+    {
+        Console.Clear();
+        Console.Write("Enter a path: ");
+        string path = Console.ReadLine()!;
+        
+        if (!File.Exists(path))
+        {
+            Console.WriteLine($"Error the file({path}) wasn't found");
+            
             return;
         }
-
-        private static void ExecuteFile()
+        
+        string file = File.ReadAllText(path);
+        
+        Environment environment = new Environment();
+        
+        Lexer lexer = new Lexer(file);
+        Parser parser = new Parser(lexer);
+        
+        Code? code = parser.ParseCode();
+        
+        if (parser.errors.Count > 0)
         {
-            Console.Clear();
-            Console.Write("Enter a path: ");
-            string @path = Console.ReadLine();
-
-            if (!File.Exists(path))
+            PrintParserErrors(parser);
+            return;
+        }
+        
+        Evaluator eval = new Evaluator();
+        
+        var result = eval.Eval(code, environment);
+        
+        if (result.Type() == ObjectType.Error)
+        {
+            Console.WriteLine(result.Inspect());
+        }
+    }
+    
+    private static void DoRepl()
+    {
+        Console.Clear();
+        Console.WriteLine("Feel free to type in commands");
+        Environment environment = new Environment();
+        Console.OutputEncoding = System.Text.Encoding.UTF8;
+        
+        while (true)
+        {
+            Console.Write("\u003E\u003E");
+            string input = Console.ReadLine()!;
+            
+            if (input is "exit" or "e")
             {
-                Console.WriteLine($"Error the file({path}) wasn't found");
-                return; 
+                break;
             }
-
-            string file = File.ReadAllText(path);
-
-            Environment environment = new Environment();
-
-            Lexer lexer = new Lexer(file);
+            
+            Lexer lexer = new Lexer(input);
             Parser parser = new Parser(lexer);
-
-            Code code = parser.ParseCode();
-
+            
+            var program = parser.ParseCode();
+            
             if (parser.errors.Count > 0)
             {
-                foreach (var err in parser.errors)
-                {
-                    PrintParserErrors(parser);
-                    continue;
-                }
-                return;
+                PrintParserErrors(parser);
+                
+                continue;
             }
-
-            Evaluator eval = new Evaluator();
-
-            var result = eval.Eval(code, environment);
-
-            if (result.Type() == ObjectType.ERROR)
+            
+            Evaluator evaluator = new Evaluator();
+            
+            var evaluated = evaluator.Eval(program, environment);
+            
+            if (evaluated.Type() == ObjectType.Error)
             {
-                Console.WriteLine(result.Inspect());
-            }
-        }
-
-		private static void DOREPL()
-		{
-            Console.Clear();
-            Console.WriteLine("Feel free to type in commands");
-            string input = "";
-            Environment enviroment = new Environment();
-            Console.OutputEncoding = System.Text.Encoding.UTF8;
-
-            while (true)
-            {
-                Console.Write("\u003E\u003E");
-                input = Console.ReadLine()!;
-
-                if (input == "exit" || input == "e")
-                {
-                    break;
-                }
-
-                Lexer lexer = new Lexer(input);
-                Parser parser = new Parser(lexer);
-
-                var program = parser.ParseCode();
-
-                if (parser.errors.Count > 0)
-                {
-                    PrintParserErrors(parser);
-                    continue;
-                }
-
-                Evaluator evaluator = new Evaluator();
-
-                var evaluated = evaluator.Eval(program, enviroment);
-
-                if(evaluated.Type() == ObjectType.ERROR)
-                {
-                    Console.WriteLine(evaluated.Inspect());
-                }
+                Console.WriteLine(evaluated.Inspect());
             }
         }
     }
