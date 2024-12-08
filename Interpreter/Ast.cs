@@ -1,6 +1,4 @@
-﻿using System.Text;
-
-namespace Interpreter;
+﻿namespace Interpreter;
 
 public interface INode
 {
@@ -8,15 +6,9 @@ public interface INode
     string ToString();
 }
 
-public interface IStatement : INode
-{
-    
-}
+public interface IStatement : INode { }
 
-public interface IExpression : INode
-{
-    
-}
+public interface IExpression : INode { }
 
 public class Code : INode
 {
@@ -54,29 +46,22 @@ public class ArrayLiteral : IExpression
 public class ExpressionStatement : IStatement
 {
     public Token Token;
-    public IExpression? Expression;
+    public required IExpression Expression;
     
     public string TokenLiteral() => Token.Literal;
     
-    public override string ToString() => Expression != null ? Expression.ToString() : "";
+    public override string ToString() => Expression.ToString();
 }
 
 public class LetStatement : IStatement
 {
     public Token Token { get; init; }
     public required Identifier Name { get; set; }
-    public required IExpression? Value { get; set; }
+    public required IExpression Value { get; set; }
     
     public string TokenLiteral() => Token.Literal;
     
-    public override string ToString()
-    {
-        var sb = new StringBuilder();
-        
-        sb.Append(TokenLiteral() + " " + Name + " = " + Value?.ToString());
-        
-        return sb.ToString();
-    }
+    public override string ToString() => $"{TokenLiteral()} {Name} = {Value.ToString()}";
 }
 
 public class ReturnStatement : IStatement
@@ -99,7 +84,6 @@ public class BlockStatement : IStatement
     public override string ToString()
     {
         return Statements.Aggregate("{\n", (current, item) => current + item.ToString() + "\n") + "}";
-        
     }
 }
 
@@ -161,24 +145,12 @@ public class CallExpression : IExpression
 {
     public Token Token { get; init; }
     public required IExpression Function { get; init; }
-    public List<IExpression> Arguments { get; set; } = new();
+    public List<IExpression> Arguments { get; init; } = new();
     
     public string TokenLiteral() => Token.Literal;
     
-    public override string ToString()
-    {
-        string str = "";
-        
-        str += Function.ToString();
-        str += "(";
-        
-        var argumnets = from argument in Arguments select argument.ToString();
-        
-        str += string.Join(",", argumnets) + ")";
-        
-        return str;
-    }
-    
+    public override string ToString() =>
+        $"{Function.ToString()}({string.Join(",", Arguments.Select(x => x.ToString()))})";
 }
 
 public class PrefixExpression : IExpression
@@ -196,12 +168,12 @@ public class InfixExpression : IExpression
 {
     public Token Token { get; init; }
     public required string Op { get; init; }
-    public required IExpression? Left { get; init; }
-    public required IExpression? Right { get; set; }
+    public required IExpression Left { get; init; }
+    public required IExpression Right { get; set; }
     
     public string TokenLiteral() => Token.Literal;
     
-    public override string ToString() => "(" + Left?.ToString() + " " + Op + " " + Right?.ToString() + ")";
+    public override string ToString() => $"{Left.ToString()} {Op} {Right.ToString()})";
 }
 
 public class IfExpression : IExpression
@@ -217,7 +189,7 @@ public class IfExpression : IExpression
     {
         string value = "if" + Condition.ToString() + " " + Consequence;
         
-        if(Alternative != null)
+        if (Alternative != null)
         {
             value += "else" + Alternative;
         }
