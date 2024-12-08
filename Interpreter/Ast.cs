@@ -1,334 +1,237 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Xml.Linq;
+﻿using System.Text;
 
-namespace Interpreter
+namespace Interpreter;
+
+public interface INode
 {
-	public interface Node
-	{
-		string TokenLiteral();
-		string ToString();
-	}
+    string TokenLiteral();
+    string ToString();
+}
 
-	public interface Statement : Node
-	{
+public interface IStatement : INode
+{
+    
+}
 
-	}
+public interface IExpression : INode
+{
+    
+}
 
-	public interface Expression : Node
-	{
-
-	}
-
-	public class Code : Node
-	{
-        public List<Statement> statements { get; set; } = new List<Statement>();
-
-		public string TokenLiteral()
-		{
-			if(statements.Count > 0)
-			{
-				return statements[0].TokenLiteral();
-			}
-			return "";
-		}
-        public override string ToString()
-        {
-			var str = "";
-			foreach (var item in statements)
-			{
-				str += item.ToString();
-			}
-			return str;
-        }
+public class Code : INode
+{
+    public List<IStatement> Statements { get; } = new();
+    
+    public string TokenLiteral() => Statements.Count > 0 ? Statements[0].TokenLiteral() : "";
+    
+    public override string ToString()
+    {
+        return Statements.Aggregate("", (current, item) => current + item.ToString());
     }
+}
 
-	public class IndexExpression : Expression
-	{
-		public Token token { get; set; }
-		public Expression left { get; set; }
-		public Expression index { get; set; }
+public class IndexExpression : IExpression
+{
+    public Token Token { get; init; }
+    public required IExpression Left { get; init; }
+    public required IExpression Index { get; set; }
+    
+    public string TokenLiteral() => Token.Literal;
+    
+    public override string ToString() => $"({Left.ToString()}[{Index.ToString()}])";
+}
 
-		public string TokenLiteral()
-		{
-			return token.Literal;
-		}
+public class ArrayLiteral : IExpression
+{
+    public Token Token { get; init; }
+    public required List<IExpression> Elements { get; init; }
+    
+    public string TokenLiteral() => Token.Literal;
+    
+    public override string ToString() => $"[{string.Join(",", Elements)}]";
+}
 
-        public override string ToString()
-        {
-            return $"({left.ToString()}[{index.ToString()}])";
-        }
+public class ExpressionStatement : IStatement
+{
+    public Token Token;
+    public IExpression? Expression;
+    
+    public string TokenLiteral() => Token.Literal;
+    
+    public override string ToString() => Expression != null ? Expression.ToString() : "";
+}
+
+public class LetStatement : IStatement
+{
+    public Token Token { get; init; }
+    public required Identifier Name { get; set; }
+    public required IExpression? Value { get; set; }
+    
+    public string TokenLiteral() => Token.Literal;
+    
+    public override string ToString()
+    {
+        var sb = new StringBuilder();
+        
+        sb.Append(TokenLiteral() + " " + Name + " = " + Value?.ToString());
+        
+        return sb.ToString();
     }
+}
 
-	public class ArrayLiteral : Expression
-	{
-		public Token token { get; set; }
-		public  List<Expression> elements { get; set; }
+public class ReturnStatement : IStatement
+{
+    public Token Token { get; init; }
+    public required IExpression Value { get; set; }
+    
+    public string TokenLiteral() => Token.Literal;
+    
+    public override string ToString() => $"{Token.Literal} {Value}";
+}
 
-		public string TokenLiteral()
-		{
-			return token.Literal;
-		}
-
-        public override string ToString()
-        {
-            return $"[{string.Join(",", elements)}]";
-        }
+public class BlockStatement : IStatement
+{
+    public Token Token { get; init; }
+    public List<IStatement> Statements { get; init; } = new();
+    
+    public string TokenLiteral() => Token.Literal;
+    
+    public override string ToString()
+    {
+        return Statements.Aggregate("{\n", (current, item) => current + item.ToString() + "\n") + "}";
+        
     }
+}
 
-	public class ExpressionStatement : Statement
-	{
-		public Token token;
-		public Expression expression;
+public class Identifier : IExpression
+{
+    public Token Token { get; init; }
+    public required string Value { get; init; }
+    
+    public string TokenLiteral() => Token.Literal;
+    
+    public override string ToString() => Value;
+}
 
-		public string TokenLiteral()
-		{
-			return token.Literal;
-		}
+public class IntegerLiteral : IExpression
+{
+    public Token Token { get; init; }
+    public int Value { get; init; }
+    
+    public string TokenLiteral() => Token.Literal;
+    
+    public override string ToString() => Token.Literal;
+}
 
-        public override string ToString()
-        {
-            if (expression != null)
-                return expression.ToString();
+public class BooleanLiteral : IExpression
+{
+    public Token Token { get; init; }
+    public bool Value { get; init; }
+    
+    public string TokenLiteral() => Token.Literal;
+    
+    public override string ToString() => Token.Literal;
+}
 
-            return "";
-        }
+public class FunctionLiteral : IExpression
+{
+    public Token Token { get; init; }
+    public List<Identifier> Parameters { get; set; } = new();
+    public required BlockStatement Body { get; set; }
+    
+    public string TokenLiteral() => Token.Literal;
+    
+    public override string ToString()
+    {
+        string str = "";
+        str += Token.Literal;
+        
+        IEnumerable<string> parameters = from p in Parameters select p.Value;
+        
+        str += "(";
+        str += string.Join(",", parameters) + ")";
+        
+        str += Body.ToString();
+        
+        return str;
     }
+}
 
-	public class LetStatement : Statement
-	{
-		public Token token { get; set; }
-		public Identifier name { get; set; }
-		public Expression value { get; set; }
-
-		public string TokenLiteral()
-		{
-			return token.Literal;
-		}
-
-        public override string ToString()
-        {
-			var sb = new StringBuilder();
-
-			sb.Append(TokenLiteral() + " " + name + " = " + value?.ToString());
-
-			return sb.ToString();
-        }
+public class CallExpression : IExpression
+{
+    public Token Token { get; init; }
+    public required IExpression Function { get; init; }
+    public List<IExpression> Arguments { get; set; } = new();
+    
+    public string TokenLiteral() => Token.Literal;
+    
+    public override string ToString()
+    {
+        string str = "";
+        
+        str += Function.ToString();
+        str += "(";
+        
+        var argumnets = from argument in Arguments select argument.ToString();
+        
+        str += string.Join(",", argumnets) + ")";
+        
+        return str;
     }
+    
+}
 
-	public class ReturnStatement : Statement
-	{
-		public Token token { get; set; }
-		public Expression value { get; set; }
+public class PrefixExpression : IExpression
+{
+    public Token Token { get; init; }
+    public required string Op { get; init; }
+    public required IExpression Right { get; init; }
+    
+    public string TokenLiteral() => Token.Literal;
+    
+    public override string ToString() => "(" + Op + Right.ToString() + ")";
+}
 
-		public string TokenLiteral()
-		{
-			return token.Literal; 
-		}
+public class InfixExpression : IExpression
+{
+    public Token Token { get; init; }
+    public required string Op { get; init; }
+    public required IExpression? Left { get; init; }
+    public required IExpression? Right { get; set; }
+    
+    public string TokenLiteral() => Token.Literal;
+    
+    public override string ToString() => "(" + Left?.ToString() + " " + Op + " " + Right?.ToString() + ")";
+}
 
-        public override string ToString()
+public class IfExpression : IExpression
+{
+    public Token Token { get; init; }
+    public required IExpression Condition { get; set; }
+    public required BlockStatement Consequence { get; set; }
+    public required BlockStatement? Alternative { get; set; }
+    
+    public string TokenLiteral() => Token.Literal;
+    
+    public override string ToString()
+    {
+        string value = "if" + Condition.ToString() + " " + Consequence;
+        
+        if(Alternative != null)
         {
-            return $"{token.Literal} {value}";
+            value += "else" + Alternative;
         }
+        
+        return value;
     }
+}
 
-	public class BlockStatement : Statement
-	{
-		public Token token { get; set; }
-		public List<Statement> statements { get; set; } = new List<Statement>();
-
-		public string TokenLiteral()
-		{
-			return token.Literal;
-		}
-
-        public override string ToString()
-        {
-			string str = "{\n";
-			foreach (var item in statements)
-			{
-				str += item.ToString() + "\n";
-			}
-			return str + "}";
-        }
-    }
-
-	public class Identifier : Expression
-	{
-		public Token token { get; set; }
-		public string value { get; set; }
-
-		public string TokenLiteral()
-		{
-			return token.Literal;
-		}
-
-        public override string ToString()
-        {
-            return value;
-        }
-    }
-
-	public class IntegerLiteral : Expression
-	{
-		public Token token { get; set; }
-		public int value { get; set; }
-
-		public string TokenLiteral()
-		{
-			return token.Literal;
-		}
-
-        public override string ToString()
-        {
-            return token.Literal;
-        }
-    }
-
-	public class BooleanLiteral : Expression
-	{
-		public Token token { get; set; }
-		public bool value { get; set; }
-
-		public string TokenLiteral()
-		{
-			return token.Literal;
-		}
-
-        public override string ToString()
-        {
-            return token.Literal;
-        }
-    }
-
-	public class FunctionLiteral : Expression
-	{
-		public Token token { get; set; }
-		public List<Identifier> parameters { get; set; } = new List<Identifier>();
-		public BlockStatement body { get; set; }
-
-		public string TokenLiteral()
-		{
-			return token.Literal;
-		}
-
-        public override string ToString()
-        {
-            string str = "";
-            str += token.Literal;
-
-            var _parameters = from p in parameters select p.value;
-
-            str += "(";
-            str += string.Join(",", _parameters) + ")";
-
-            str += body.ToString();
-
-            return str;
-        }
-    }
-
-	public class CallExpression : Expression
-	{
-		public Token token { get; set; }
-		public Expression function { get; set; }
-		public List<Expression> arguments { get; set; } = new List<Expression>();
-
-		public string TokenLiteral()
-		{
-			return token.Literal;
-		}
-
-        public override string ToString()
-        {
-            string str = "";
-
-            str += function.ToString();
-            str += "(";
-
-            var _argumnets = from argument in arguments select argument.ToString();
-
-            str += string.Join(",", _argumnets) + ")";
-
-            return str;
-        }
-
-    }
-
-	public class PrefixExpression : Expression
-	{
-		public Token token { get; set; }
-        public string op { get; set; }
-		public Expression right { get; set; }
-
-		public string TokenLiteral()
-		{
-			return token.Literal;
-		}
-
-        public override string ToString()
-        {
-            return "(" + op + right.ToString() + ")";
-        }
-    }
-
-	public class InfixExpression : Expression
-	{
-		public Token token { get; set; }
-		public string op { get; set; }
-		public Expression left { get; set; }
-		public Expression right { get; set; }
-
-		public string TokenLiteral()
-		{
-			return token.Literal;
-		}
-
-        public override string ToString()
-        {
-            return "(" + left?.ToString() + " " + op + " " + right?.ToString() + ")";
-        }
-    }
-
-	public class IfExpression : Expression
-	{
-		public Token token { get; set; }
-		public Expression condition { get; set; }
-		public BlockStatement consequence { get; set; }
-		public BlockStatement alternative { get; set; }
-
-		public string TokenLiteral()
-		{
-			return token.Literal;
-		}
-        public override string ToString()
-        {
-            string value = "if" + condition.ToString() + " " + consequence;
-
-			if(alternative != null)
-			{
-				value += "else" + alternative;
-			}
-
-			return value;
-        }
-    }
-
-	public class StringLiteral : Expression
-	{
-		public Token token { get; set; }
-		public string value { get; set; }
-
-		public string TokenLiteral()
-		{
-			return token.Literal;
-		}
-
-        public override string ToString()
-        {
-            return token.Literal;
-        }
-    }
+public class StringLiteral : IExpression
+{
+    public Token Token { get; init; }
+    public required string Value { get; init; }
+    
+    public string TokenLiteral() => Token.Literal;
+    
+    public override string ToString() => Token.Literal;
 }
