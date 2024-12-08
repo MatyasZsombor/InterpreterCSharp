@@ -1,249 +1,235 @@
-﻿using Xunit.Abstractions;
+﻿namespace UnitTests;
 
-namespace UnitTests
+public class LexerTests
 {
-    public class LexerTests
+    [Fact]
+    public void Test1()
     {
-        private readonly ITestOutputHelper output;
-
-        public LexerTests(ITestOutputHelper output)
+        const string Input = "4 + 3 - 2 * 5 10 + (2 + 3) 3 1 2";
+        
+        List<Token> expected = new List<Token>
         {
-            this.output = output;
-        }
-
-        [Fact]
-        public void Test1()
-        {
-            const string input = "4 + 3 - 2 * 5 10 + (2 + 3) 3 1 2";
-
-            List<Token> expected = new List<Token>
+            new()
             {
-              new Token()
-              {
                 Type = TokenType.INT,
                 Literal = "4"
-              },
-              new Token()
-              {
+            },
+            new()
+            {
                 Type = TokenType.PLUS,
                 Literal = "+"
-              },
-              new Token()
-              {
+            },
+            new()
+            {
                 Type = TokenType.INT,
                 Literal = "3"
-              },
-              new Token()
-              {
+            },
+            new()
+            {
                 Type = TokenType.MINUS,
                 Literal = "-"
-              },
-              new Token()
-              {
+            },
+            new()
+            {
                 Type = TokenType.INT,
                 Literal = "2"
-              },
-              new Token()
-              {
+            },
+            new()
+            {
                 Type = TokenType.ASTERISK,
                 Literal = "*"
-              },
-              new Token()
-              {
+            },
+            new()
+            {
                 Type = TokenType.INT,
                 Literal = "5"
-              },
-              new Token()
-              {
+            },
+            new()
+            {
                 Type = TokenType.INT,
                 Literal = "10"
-              },
-              new Token()
-              {
+            },
+            new()
+            {
                 Type = TokenType.PLUS,
                 Literal = "+"
-              },
-              new Token()
-              {
+            },
+            new()
+            {
                 Type = TokenType.LPAREN,
                 Literal = "("
-              },
-              new Token()
-              {
+            },
+            new()
+            {
                 Type = TokenType.INT,
                 Literal = "2"
-              },
-              new Token()
-              {
+            },
+            new()
+            {
                 Type = TokenType.PLUS,
                 Literal = "+"
-              },
-              new Token()
-              {
+            },
+            new()
+            {
                 Type = TokenType.INT,
                 Literal = "3"
-              },
-              new Token()
-              {
+            },
+            new()
+            {
                 Type = TokenType.RPAREN,
                 Literal = ")"
-              },
-              new Token()
-              {
+            },
+            new()
+            {
                 Type = TokenType.INT,
                 Literal = "3"
-              },
-              new Token()
-              {
+            },
+            new()
+            {
                 Type = TokenType.INT,
                 Literal = "1"
-              },
-              new Token()
-              {
+            },
+            new()
+            {
                 Type = TokenType.INT,
                 Literal = "2"
-              },
-              new Token()
-              {
+            },
+            new()
+            {
                 Type = TokenType.EOF,
                 Literal = ""
-              }
-            };
-
-            Lexer lexer = new Lexer(input);
-
-            foreach (var t in expected)
-            {
-                var curToken = lexer.NextToken();
-
-                Console.WriteLine(curToken.ToString() + " " + t.ToString());
-                Assert.Equal(t, curToken);
             }
-        }
-
-        [Fact]
-        public void Test2()
+        };
+        
+        Lexer lexer = new Lexer(Input);
+        
+        foreach (var t in expected)
         {
-            const string input = "! != ==";
-            List<Token> expected = new List<Token>()
-            {
-                new Token
-                {
-                    Type = TokenType.BANG,
-                    Literal = "!"
-                },
-                new Token
-                {
-                    Type = TokenType.NOT_EQ,
-                    Literal = "!="
-                },
-                new Token
-                {
-                    Type = TokenType.EQ,
-                    Literal = "=="
-                },
-                new Token
-                {
-                    Type = TokenType.EOF,
-                    Literal = ""
-                }
-            };
-
-            Lexer lexer = new Lexer(input);
-            foreach (var t in expected)
-            {
-                var curToken = lexer.NextToken();
-
-                Console.WriteLine(curToken.ToString() + " " + t.ToString());
-                Assert.Equal(t, curToken);
-            }
+            var curToken = lexer.NextToken();
+            Assert.Equal(t, curToken);
         }
-
-        [Fact]
-        public void Test3()
+    }
+    
+    [Fact]
+    public void Test2()
+    {
+        const string Input = "! != ==";
+        List<Token> expected = new List<Token>
         {
-            const string input = "\"foobar\" \"foo bar\" ";
-            List<Token> expected = new List<Token>()
+            new()
             {
-                new Token
-                {
-                    Type = TokenType.STRING,
-                    Literal = "foobar"
-                },
-                new Token
-                {
-                    Type = TokenType.STRING,
-                    Literal = "foo bar"
-                },
-                new Token
-                {
-                    Type = TokenType.EOF,
-                    Literal = ""
-                }
-            };
-
-            Lexer lexer = new Lexer(input);
-            foreach (var t in expected)
+                Type = TokenType.BANG,
+                Literal = "!"
+            },
+            new()
             {
-                var curToken = lexer.NextToken();
-                Assert.Equal(t, curToken);
+                Type = TokenType.NOT_EQ,
+                Literal = "!="
+            },
+            new()
+            {
+                Type = TokenType.EQ,
+                Literal = "=="
+            },
+            new()
+            {
+                Type = TokenType.EOF,
+                Literal = ""
             }
+        };
+        
+        Lexer lexer = new Lexer(Input);
+        foreach (var t in expected)
+        {
+            var curToken = lexer.NextToken();
+            Assert.Equal(t, curToken);
         }
-
-        [Fact]
-        public void Test4()
+    }
+    
+    [Fact]
+    public void Test3()
+    {
+        const string Input = "\"foobar\" \"foo bar\" ";
+        List<Token> expected = new List<Token>
         {
-            const string input = "[1, 2, 3]";
-            List<Token> expected = new List<Token>()
+            new()
             {
-                new Token
-                {
-                    Type = TokenType.LBRACKET,
-                    Literal = "["
-                },
-                new Token
-                {
-                    Type = TokenType.INT,
-                    Literal = "1"
-                },
-                new Token
-                {
-                    Type = TokenType.COMMA,
-                    Literal = ","
-                },
-                new Token
-                {
-                    Type = TokenType.INT,
-                    Literal = "2"
-                },
-                new Token
-                {
-                    Type = TokenType.COMMA,
-                    Literal = ","
-                },
-                new Token
-                {
-                    Type = TokenType.INT,
-                    Literal = "3"
-                },
-                new Token
-                {
-                    Type = TokenType.RBRACKET,
-                    Literal = "]"
-                },
-                new Token
-                {
-                    Type = TokenType.EOF,
-                    Literal = ""
-                }
-            };
-
-            Lexer lexer = new Lexer(input);
-            foreach (var t in expected)
+                Type = TokenType.STRING,
+                Literal = "foobar"
+            },
+            new()
             {
-                var curToken = lexer.NextToken();
-                Assert.Equal(t, curToken);
+                Type = TokenType.STRING,
+                Literal = "foo bar"
+            },
+            new()
+            {
+                Type = TokenType.EOF,
+                Literal = ""
             }
+        };
+        
+        Lexer lexer = new Lexer(Input);
+        foreach (var t in expected)
+        {
+            var curToken = lexer.NextToken();
+            Assert.Equal(t, curToken);
+        }
+    }
+    
+    [Fact]
+    public void Test4()
+    {
+        const string Input = "[1, 2, 3]";
+        List<Token> expected = new List<Token>
+        {
+            new()
+            {
+                Type = TokenType.LBRACKET,
+                Literal = "["
+            },
+            new()
+            {
+                Type = TokenType.INT,
+                Literal = "1"
+            },
+            new()
+            {
+                Type = TokenType.COMMA,
+                Literal = ","
+            },
+            new()
+            {
+                Type = TokenType.INT,
+                Literal = "2"
+            },
+            new()
+            {
+                Type = TokenType.COMMA,
+                Literal = ","
+            },
+            new()
+            {
+                Type = TokenType.INT,
+                Literal = "3"
+            },
+            new()
+            {
+                Type = TokenType.RBRACKET,
+                Literal = "]"
+            },
+            new()
+            {
+                Type = TokenType.EOF,
+                Literal = ""
+            }
+        };
+        
+        Lexer lexer = new Lexer(Input);
+        foreach (var t in expected)
+        {
+            var curToken = lexer.NextToken();
+            Assert.Equal(t, curToken);
         }
     }
 }
