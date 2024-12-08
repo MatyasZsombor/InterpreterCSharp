@@ -1,38 +1,38 @@
-﻿using System;
+﻿namespace Interpreter;
 
 public class Lexer
 {
     private readonly string _input;
-    private int _position = 0;
-    private int readPosition = 0;
-    private char ch;
-
+    private int _position;
+    private int _readPosition;
+    private char _ch;
+    
     public Lexer(string input)
     {
         _input = input;
         ReadChar();
     }
-
+    
     private void ReadChar()
     {
-        if(readPosition > _input.Length - 1)
+        if(_readPosition > _input.Length - 1)
         {
-            ch = (char)0;
+            _ch = (char)0;
         }
         else
         {
-            ch = _input[readPosition];
+            _ch = _input[_readPosition];
         }
-        _position = readPosition;
-        readPosition++;
+        _position = _readPosition;
+        _readPosition++;
     }
-
+    
     public Token NextToken()
     {
         Token token = new Token();
         SkipWhiteSpace();
-
-        switch (ch)
+        
+        switch (_ch)
         {
             case '[':
                 token = NewToken(TokenType.LBRACKET, "[");
@@ -74,9 +74,9 @@ public class Lexer
             case '!':
                 if(PeekChar() == '=')
                 {
-                    char currentChar = ch;
+                    char currentChar = _ch;
                     ReadChar();
-                    token = new Token { Type = TokenType.NOT_EQ, Literal = Convert.ToString(currentChar) + Convert.ToString(ch) };
+                    token = new Token { Type = TokenType.NOT_EQ, Literal = Convert.ToString(currentChar) + Convert.ToString(_ch) };
                 }
                 else
                 {
@@ -121,90 +121,87 @@ public class Lexer
                 token = NewToken(TokenType.EOF, "");
                 break;
             default:
-                if (char.IsLetter(ch))
+                if (char.IsLetter(_ch))
                 {
                     token.Literal = ReadIdentifier();
                     token.Type = token.LookUpIdent(token.Literal);
                     return token;
                 }
-                else if (char.IsDigit(ch))
+                
+                if (char.IsDigit(_ch))
                 {
                     token.Literal = ReadNumber();
                     token.Type = TokenType.INT;
                     return token;
                 }
-                else
-                {
-                    token = NewToken(TokenType.ILLEGAL, Convert.ToString(ch));
-                }
+                token = NewToken(TokenType.ILLEGAL, Convert.ToString(_ch));
+                
                 break;
         }
         ReadChar();
         return token;
     }
-
+    
     private Token NewStringToken()
     {
-        var token = new Token() { Type = TokenType.STRING };
-
-        var position = _position;
-
-        while (ch != '"')
+        var token = new Token { Type = TokenType.STRING };
+        
+        int position = _position;
+        
+        while (_ch != '"')
+        {
             ReadChar();
-
+        }
+        
         token.Literal = _input.Substring(position, _position - position);
-
+        
         return token;
     }
-
-    private Token NewToken(TokenType type, string literal)
-    {
-        return new Token
+    
+    private static Token NewToken(TokenType type, string literal) =>
+        new()
         {
             Type = type,
             Literal = literal
         };
-    }
-
+    
     private string ReadIdentifier()
     {
         int position = _position;
-        while (char.IsLetter(ch))
+        while (char.IsLetter(_ch))
         {
             ReadChar();
         }
         return _input.Substring(position, _position - position);
     }
-
+    
     private string ReadNumber()
     {
         int position = _position;
-
-        while (char.IsDigit(ch))
+        
+        while (char.IsDigit(_ch))
         {
             ReadChar();
         }
         return _input.Substring(position, _position - position);
-
+        
     }
-
+    
     private void SkipWhiteSpace()
     {
-        while(ch == ' ' || ch == '\t' || ch == '\n' || ch == '\r')
+        while(_ch is ' ' or '\t' or '\n' or '\r')
         {
             ReadChar();
         }
     }
-
+    
     private char PeekChar()
     {
-        if (readPosition > _input.Length - 1)
+        if (_readPosition > _input.Length - 1)
         {
-            return ch = (char)0;
+            return _ch = (char)0;
         }
-        else
-        {
-            return _input[readPosition];
-        }
+        
+        return _input[_readPosition];
     }
 }
