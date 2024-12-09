@@ -35,106 +35,106 @@ public class Lexer
         switch (_ch)
         {
             case '[':
-                token = NewToken(TokenType.LBRACKET, "[");
+                token = NewToken(TokenType.Lbracket, "[");
                 break;
             case ']':
-                token = NewToken(TokenType.RBRACKET, "]");
+                token = NewToken(TokenType.Rbracket, "]");
                 break;
             case '=':
                 if (PeekChar() == '=')
                 {
                     ReadChar();
-                    token = NewToken(TokenType.EQ, "==");
+                    token = NewToken(TokenType.Eq, "==");
                 }
                 else
                 {
-                    token = NewToken(TokenType.ASSIGN, "=");
+                    token = NewToken(TokenType.Assign, "=");
                 }
                 break;
             case '&':
                 if(PeekChar() == '&')
                 {
                     ReadChar();
-                    token = NewToken(TokenType.AND, "&&");
+                    token = NewToken(TokenType.And, "&&");
                 }
                 break;
             case '|':
                 if(PeekChar() == '|')
                 {
                     ReadChar();
-                    token = NewToken(TokenType.OR, "||");
+                    token = NewToken(TokenType.Or, "||");
                 }
                 break;
             case '+':
-                token = NewToken(TokenType.PLUS, "+");
+                token = NewToken(TokenType.Plus, "+");
                 break;
             case '-':
-                token = NewToken(TokenType.MINUS, "-");
+                token = NewToken(TokenType.Minus, "-");
                 break;
             case '!':
                 if(PeekChar() == '=')
                 {
                     char currentChar = _ch;
                     ReadChar();
-                    token = new Token { Type = TokenType.NOT_EQ, Literal = Convert.ToString(currentChar) + Convert.ToString(_ch) };
+                    token = new Token { Type = TokenType.NotEq, Literal = Convert.ToString(currentChar) + Convert.ToString(_ch) };
                 }
                 else
                 {
-                    token = NewToken(TokenType.BANG, "!");
+                    token = NewToken(TokenType.Bang, "!");
                 }
                 break;
             case '*':
-                token = NewToken(TokenType.ASTERISK, "*");
+                token = NewToken(TokenType.Asterisk, "*");
                 break;
             case '/':
-                token = NewToken(TokenType.SLASH, "/");
+                token = NewToken(TokenType.Slash, "/");
                 break;
             case '<':
-                token = NewToken(TokenType.LT, "<");
+                token = NewToken(TokenType.Lt, "<");
                 break;
             case '>':
-                token = NewToken(TokenType.GT, ">");
+                token = NewToken(TokenType.Gt, ">");
                 break;
             case ',':
-                token = NewToken(TokenType.COMMA, ",");
+                token = NewToken(TokenType.Comma, ",");
                 break;
             case ';':
-                token = NewToken(TokenType.SEMICOLON, ";");
+                token = NewToken(TokenType.Semicolon, ";");
                 break;
             case '(':
-                token = NewToken(TokenType.LPAREN, "(");
+                token = NewToken(TokenType.Lparen, "(");
                 break;
             case ')':
-                token = NewToken(TokenType.RPAREN, ")");
+                token = NewToken(TokenType.Rparen, ")");
                 break;
             case '{':
-                token = NewToken(TokenType.LBRACE, "{");
+                token = NewToken(TokenType.Lbrace, "{");
                 break;
             case '}':
-                token = NewToken(TokenType.RBRACE, "}");
+                token = NewToken(TokenType.Rbrace, "}");
                 break;
             case '"':
                 ReadChar();
                 token = NewStringToken();
                 break;
             case (char)0:
-                token = NewToken(TokenType.EOF, "");
+                token = NewToken(TokenType.Eof, "");
                 break;
             default:
                 if (char.IsLetter(_ch))
                 {
                     token.Literal = ReadIdentifier();
-                    token.Type = token.LookUpIdent(token.Literal);
+                    token.Type = Token.LookUpIdent(token.Literal);
                     return token;
                 }
                 
                 if (char.IsDigit(_ch))
                 {
                     token.Literal = ReadNumber();
-                    token.Type = TokenType.INT;
+                    token.Type = TokenType.Int;
                     return token;
                 }
-                token = NewToken(TokenType.ILLEGAL, Convert.ToString(_ch));
+                token = NewToken(TokenType.Illegal, Convert.ToString(_ch));
                 
                 break;
         }
@@ -144,7 +144,7 @@ public class Lexer
     
     private Token NewStringToken()
     {
-        var token = new Token { Type = TokenType.STRING };
+        var token = new Token { Type = TokenType.String };
         
         int position = _position;
         
