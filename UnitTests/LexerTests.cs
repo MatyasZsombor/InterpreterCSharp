@@ -11,109 +11,109 @@ public class LexerTests
         [
             new Token
             {
-                Type = TokenType.INT,
+                Type = TokenType.Int,
                 Literal = "4"
             },
             
             new Token
             {
-                Type = TokenType.PLUS,
+                Type = TokenType.Plus,
                 Literal = "+"
             },
             
             new Token
             {
-                Type = TokenType.INT,
+                Type = TokenType.Int,
                 Literal = "3"
             },
             
             new Token
             {
-                Type = TokenType.MINUS,
+                Type = TokenType.Minus,
                 Literal = "-"
             },
             
             new Token
             {
-                Type = TokenType.INT,
+                Type = TokenType.Int,
                 Literal = "2"
             },
             
             new Token
             {
-                Type = TokenType.ASTERISK,
+                Type = TokenType.Asterisk,
                 Literal = "*"
             },
             
             new Token
             {
-                Type = TokenType.INT,
+                Type = TokenType.Int,
                 Literal = "5"
             },
             
             new Token
             {
-                Type = TokenType.INT,
+                Type = TokenType.Int,
                 Literal = "10"
             },
             
             new Token
             {
-                Type = TokenType.PLUS,
+                Type = TokenType.Plus,
                 Literal = "+"
             },
             
             new Token
             {
-                Type = TokenType.LPAREN,
+                Type = TokenType.Lparen,
                 Literal = "("
             },
             
             new Token
             {
-                Type = TokenType.INT,
+                Type = TokenType.Int,
                 Literal = "2"
             },
             
             new Token
             {
-                Type = TokenType.PLUS,
+                Type = TokenType.Plus,
                 Literal = "+"
             },
             
             new Token
             {
-                Type = TokenType.INT,
+                Type = TokenType.Int,
                 Literal = "3"
             },
             
             new Token
             {
-                Type = TokenType.RPAREN,
+                Type = TokenType.Rparen,
                 Literal = ")"
             },
             
             new Token
             {
-                Type = TokenType.INT,
+                Type = TokenType.Int,
                 Literal = "3"
             },
             
             new Token
             {
-                Type = TokenType.INT,
+                Type = TokenType.Int,
                 Literal = "1"
             },
             
             new Token
             {
-                Type = TokenType.INT,
+                Type = TokenType.Int,
                 Literal = "2"
             },
             
             new Token
             {
-                Type = TokenType.EOF,
+                Type = TokenType.Eof,
                 Literal = ""
             }
         ];
@@ -135,25 +135,25 @@ public class LexerTests
         [
             new Token
             {
-                Type = TokenType.BANG,
+                Type = TokenType.Bang,
                 Literal = "!"
             },
             
             new Token
             {
-                Type = TokenType.NOT_EQ,
+                Type = TokenType.NotEq,
                 Literal = "!="
             },
             
             new Token
             {
-                Type = TokenType.EQ,
+                Type = TokenType.Eq,
                 Literal = "=="
             },
             
             new Token
             {
-                Type = TokenType.EOF,
+                Type = TokenType.Eof,
                 Literal = ""
             }
         ];
@@ -174,19 +174,19 @@ public class LexerTests
         [
             new Token
             {
-                Type = TokenType.STRING,
+                Type = TokenType.String,
                 Literal = "foobar"
             },
             
             new Token
             {
-                Type = TokenType.STRING,
+                Type = TokenType.String,
                 Literal = "foo bar"
             },
             
             new Token
             {
-                Type = TokenType.EOF,
+                Type = TokenType.Eof,
                 Literal = ""
             }
         ];
@@ -207,49 +207,49 @@ public class LexerTests
         [
             new Token
             {
-                Type = TokenType.LBRACKET,
+                Type = TokenType.Lbracket,
                 Literal = "["
             },
             
             new Token
             {
-                Type = TokenType.INT,
+                Type = TokenType.Int,
                 Literal = "1"
             },
             
             new Token
             {
-                Type = TokenType.COMMA,
+                Type = TokenType.Comma,
                 Literal = ","
             },
             
             new Token
             {
-                Type = TokenType.INT,
+                Type = TokenType.Int,
                 Literal = "2"
             },
             
             new Token
             {
-                Type = TokenType.COMMA,
+                Type = TokenType.Comma,
                 Literal = ","
             },
             
             new Token
             {
-                Type = TokenType.INT,
+                Type = TokenType.Int,
                 Literal = "3"
             },
             
             new Token
             {
-                Type = TokenType.RBRACKET,
+                Type = TokenType.Rbracket,
                 Literal = "]"
             },
             
             new Token
             {
-                Type = TokenType.EOF,
+                Type = TokenType.Eof,
                 Literal = ""
             }
         ];
