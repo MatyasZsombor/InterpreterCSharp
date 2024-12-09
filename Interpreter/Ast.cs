@@ -100,6 +100,7 @@ public class Identifier : IExpression
 public class IntegerLiteral : IExpression
 {
     public Token Token { get; init; }
+    public required int Value { get; init; }
     
     public string TokenLiteral() => Token.Literal;
     
@@ -109,6 +110,8 @@ public class IntegerLiteral : IExpression
 public class BooleanLiteral : IExpression
 {
     public Token Token { get; init; }
+    
+    public required bool Value { get; init; }
     
     public string TokenLiteral() => Token.Literal;
     
@@ -199,6 +202,7 @@ public class IfExpression : IExpression
 public class StringLiteral : IExpression
 {
     public Token Token { get; init; }
+    public required string Value { get; init; }
     
     public string TokenLiteral() => Token.Literal;
     

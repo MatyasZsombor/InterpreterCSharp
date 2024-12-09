@@ -16,7 +16,7 @@ public class ParserTests(ITestOutputHelper output)
         CheckParserErrors(parser);
         Assert.NotEmpty(code.Statements);
         
-        Assert.Equal(new IntegerLiteral { Token = new Token { Literal = "42", Type = TokenType.Int } }.ToString(), code.Statements[0].ToString());
+        Assert.Equal(new IntegerLiteral { Token = new Token { Literal = "42" , Type = TokenType.Int }, Value = 42}.ToString(), code.Statements[0].ToString());
     }
 
     [Fact]
@@ -98,7 +98,7 @@ public class ParserTests(ITestOutputHelper output)
 
         CheckParserErrors(parser);
         Assert.NotEmpty(code.Statements);
-        Assert.Equal(new BooleanLiteral { Token = new Token { Literal = "false", Type = TokenType.False } }.ToString(), code.Statements[0].ToString());
+        Assert.Equal(new BooleanLiteral { Token = new Token { Literal = "false", Type = TokenType.False }, Value = false}.ToString(), code.Statements[0].ToString());
 
     }
 

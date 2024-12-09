@@ -40,7 +40,7 @@ public class Error : IEvObject
 
 public class Integer : IEvObject
 {
-    public double Value { get; init; }
+    public int Value { get; init; }
     
     public ObjectType Type() => ObjectType.Integer;
     

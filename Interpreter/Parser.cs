@@ -322,7 +322,7 @@ public class Parser
     private class StringLiteralParslet : IPrefixParslet
     {
         public IExpression Parse(Parser parser, Token token) =>
-            new StringLiteral { Token = token };
+            new StringLiteral { Token = token, Value = token.Literal};
     }
     
     private class IdentifierParslet : IPrefixParslet
@@ -333,13 +333,13 @@ public class Parser
     private class IntegerParslet : IPrefixParslet
     {
         public IExpression Parse(Parser parser, Token token) =>
-            new IntegerLiteral { Token = token };
+            new IntegerLiteral { Token = token, Value = int.Parse(token.Literal)};
     }
     
     private class BooleanParslet : IPrefixParslet
     {
         public IExpression Parse(Parser parser, Token token) =>
-            new BooleanLiteral { Token = token };
+            new BooleanLiteral { Token = token, Value = token.Literal == "true"};
     }
     
     private class GroupedExpressionParslet : IPrefixParslet

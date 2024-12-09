@@ -1,10 +1,13 @@
-﻿namespace Interpreter;
+﻿using System.Globalization;
+using System.Text;
+
+namespace Interpreter;
 
 public static class Repl
 {
     private static void Main()
     {
-        int code = int.Parse("1F435", System.Globalization.NumberStyles.HexNumber);
+        int code = int.Parse("1F435", NumberStyles.HexNumber);
         string unicodeString = char.ConvertFromUtf32(code);
         
         Console.WriteLine("Monkey 1.0 " + unicodeString);
@@ -28,7 +31,7 @@ public static class Repl
     
     public static void PrintParserErrors(Parser parser)
     {
-        List<string> errors = parser.errors;
+        List<string> errors = parser.Errors;
         Console.WriteLine("Parser errors:");
         foreach (var item in errors)
         {
@@ -56,12 +59,11 @@ public static class Repl
         Lexer lexer = new Lexer(file);
         Parser parser = new Parser(lexer);
         
-        Code? code = parser.ParseCode();
+        Code code = parser.ParseCode();
         
-        if (parser.errors.Count > 0)
+        if (parser.Errors.Count > 0)
         {
             PrintParserErrors(parser);
-            return;
         }
         
         Evaluator eval = new Evaluator();
@@ -79,7 +81,7 @@ public static class Repl
         Console.Clear();
         Console.WriteLine("Feel free to type in commands");
         Environment environment = new Environment();
-        Console.OutputEncoding = System.Text.Encoding.UTF8;
+        Console.OutputEncoding = Encoding.UTF8;
         
         while (true)
         {
@@ -96,11 +98,9 @@ public static class Repl
             
             var program = parser.ParseCode();
             
-            if (parser.errors.Count > 0)
+            if (parser.Errors.Count > 0)
             {
                 PrintParserErrors(parser);
-                
-                continue;
             }
             
             Evaluator evaluator = new Evaluator();
