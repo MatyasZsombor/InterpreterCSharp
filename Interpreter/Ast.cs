@@ -6,13 +6,13 @@ public interface INode
     string ToString();
 }
 
-public interface IStatement : INode { }
+public interface IStatement : INode;
 
-public interface IExpression : INode { }
+public interface IExpression : INode;
 
 public class Code : INode
 {
-    public List<IStatement> Statements { get; } = new();
+    public List<IStatement> Statements { get; } = [];
     
     public string TokenLiteral() => Statements.Count > 0 ? Statements[0].TokenLiteral() : "";
     
@@ -26,7 +26,7 @@ public class IndexExpression : IExpression
 {
     public Token Token { get; init; }
     public required IExpression Left { get; init; }
-    public required IExpression Index { get; set; }
+    public required IExpression Index { get; init; }
     
     public string TokenLiteral() => Token.Literal;
     
@@ -56,8 +56,8 @@ public class ExpressionStatement : IStatement
 public class LetStatement : IStatement
 {
     public Token Token { get; init; }
-    public required Identifier Name { get; set; }
-    public required IExpression Value { get; set; }
+    public required Identifier Name { get; init; }
+    public required IExpression Value { get; init; }
     
     public string TokenLiteral() => Token.Literal;
     
@@ -67,7 +67,7 @@ public class LetStatement : IStatement
 public class ReturnStatement : IStatement
 {
     public Token Token { get; init; }
-    public required IExpression Value { get; set; }
+    public required IExpression Value { get; init; }
     
     public string TokenLiteral() => Token.Literal;
     
@@ -77,7 +77,7 @@ public class ReturnStatement : IStatement
 public class BlockStatement : IStatement
 {
     public Token Token { get; init; }
-    public List<IStatement> Statements { get; init; } = new();
+    public List<IStatement> Statements { get; init; } = [];
     
     public string TokenLiteral() => Token.Literal;
     
@@ -100,7 +100,6 @@ public class Identifier : IExpression
 public class IntegerLiteral : IExpression
 {
     public Token Token { get; init; }
-    public int Value { get; init; }
     
     public string TokenLiteral() => Token.Literal;
     
@@ -110,7 +109,6 @@ public class IntegerLiteral : IExpression
 public class BooleanLiteral : IExpression
 {
     public Token Token { get; init; }
-    public bool Value { get; init; }
     
     public string TokenLiteral() => Token.Literal;
     
@@ -120,8 +118,8 @@ public class BooleanLiteral : IExpression
 public class FunctionLiteral : IExpression
 {
     public Token Token { get; init; }
-    public List<Identifier> Parameters { get; set; } = new();
-    public required BlockStatement Body { get; set; }
+    public List<Identifier> Parameters { get; init; } = [];
+    public required BlockStatement Body { get; init; }
     
     public string TokenLiteral() => Token.Literal;
     
@@ -145,7 +143,7 @@ public class CallExpression : IExpression
 {
     public Token Token { get; init; }
     public required IExpression Function { get; init; }
-    public List<IExpression> Arguments { get; init; } = new();
+    public List<IExpression> Arguments { get; init; } = [];
     
     public string TokenLiteral() => Token.Literal;
     
@@ -169,19 +167,19 @@ public class InfixExpression : IExpression
     public Token Token { get; init; }
     public required string Op { get; init; }
     public required IExpression Left { get; init; }
-    public required IExpression Right { get; set; }
+    public required IExpression Right { get; init; }
     
     public string TokenLiteral() => Token.Literal;
     
-    public override string ToString() => $"{Left.ToString()} {Op} {Right.ToString()})";
+    public override string ToString() => $"({Left.ToString()} {Op} {Right.ToString()})";
 }
 
 public class IfExpression : IExpression
 {
     public Token Token { get; init; }
-    public required IExpression Condition { get; set; }
-    public required BlockStatement Consequence { get; set; }
-    public required BlockStatement? Alternative { get; set; }
+    public required IExpression Condition { get; init; }
+    public required BlockStatement Consequence { get; init; }
+    public BlockStatement? Alternative { get; set; }
     
     public string TokenLiteral() => Token.Literal;
     
@@ -201,7 +199,6 @@ public class IfExpression : IExpression
 public class StringLiteral : IExpression
 {
     public Token Token { get; init; }
-    public required string Value { get; init; }
     
     public string TokenLiteral() => Token.Literal;
     

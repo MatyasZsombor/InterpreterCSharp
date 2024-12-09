@@ -2,77 +2,75 @@
 
 namespace UnitTests;
 
-public class ParserTests
+public class ParserTests(ITestOutputHelper output)
 {
-    private readonly ITestOutputHelper output;
-
-    public ParserTests(ITestOutputHelper output)
-    {
-        this.output = output;
-    }
-
     [Fact]
     public void Test1()
     {
-        Lexer lexer = new Lexer("42");
+        Lexer lexer = new Lexer("42;");
 
         Parser parser = new Parser(lexer);
 
         var code = parser.ParseCode();
-
-        Assert.Equal(new IntegerLiteral() { token = new Token() { Literal = "42", Type = TokenType.INT }, value = 42 }.ToString(), code.statements[0].ToString());
+        
+        CheckParserErrors(parser);
+        Assert.NotEmpty(code.Statements);
+        
+        Assert.Equal(new IntegerLiteral { Token = new Token { Literal = "42", Type = TokenType.Int } }.ToString(), code.Statements[0].ToString());
     }
 
     [Fact]
     public void Test2()
     {
-        Lexer lexer = new Lexer("---42");
+        Lexer lexer = new Lexer("---42;");
 
         Parser parser = new Parser(lexer);
 
         var code = parser.ParseCode();
-
-        Assert.Equal("(-(-(-42)))", code.statements[0].ToString());
+        
+        Assert.NotEmpty(code.Statements);
+        Assert.Equal("(-(-(-42)))", code.Statements[0].ToString());
     }
 
     [Fact]
     public void Test3()
     {
-        Lexer lexer = new Lexer("-!!int");
+        Lexer lexer = new Lexer("-!!int;");
 
         Parser parser = new Parser(lexer);
 
         var code = parser.ParseCode();
-
-        Assert.Equal("(-(!(!int)))", code.statements[0].ToString());
+        
+        Assert.NotEmpty(code.Statements);
+        Assert.Equal("(-(!(!int)))", code.Statements[0].ToString());
     }
 
     [Fact]
     public void Test4()
     {
-        List<string> inputs = new List<string>()
-            {
-                "5 + 5;",
-                "5 - 5;",
-                "5 * 5;",
-                "5 / 5;",
-                "5 > 5;",
-                "5 < 5;",
-                "5 == 5;",
-                "5 != 5;"
-            };
+        List<string> inputs =
+        [
+            "5 + 5;",
+            "5 - 5;",
+            "5 * 5;",
+            "5 / 5;",
+            "5 > 5;",
+            "5 < 5;",
+            "5 == 5;",
+            "5 != 5;"
+        ];
 
-        List<string> results = new List<string>()
-            {
-                "(5 + 5)",
-                "(5 - 5)",
-                "(5 * 5)",
-                "(5 / 5)",
-                "(5 > 5)",
-                "(5 < 5)",
-                "(5 == 5)",
-                "(5 != 5)"
-            };
+        List<string> results =
+        [
+            "(5 + 5)",
+            "(5 - 5)",
+            "(5 * 5)",
+            "(5 / 5)",
+            "(5 > 5)",
+            "(5 < 5)",
+            "(5 == 5)",
+            "(5 != 5)"
+        ];
 
         for (int i = 0; i < inputs.Count; i++)
         {
@@ -83,44 +81,45 @@ public class ParserTests
             var code = parser.ParseCode();
 
             CheckParserErrors(parser);
+            Assert.NotEmpty(code.Statements);
 
-            Assert.Equal(results[i], code.statements[0].ToString());
+            Assert.Equal(results[i], code.Statements[0].ToString());
         }
     }
 
     [Fact]
     public void Test5()
     {
-        Lexer lexer = new Lexer("false");
+        Lexer lexer = new Lexer("false;");
 
         Parser parser = new Parser(lexer);
 
         var code = parser.ParseCode();
 
         CheckParserErrors(parser);
-
-        Assert.Equal(new BooleanLiteral() { token = new Token() { Literal = "false", Type = TokenType.FALSE }, value = false }.ToString(), code.statements[0].ToString());
+        Assert.NotEmpty(code.Statements);
+        Assert.Equal(new BooleanLiteral { Token = new Token { Literal = "false", Type = TokenType.False } }.ToString(), code.Statements[0].ToString());
 
     }
 
     [Fact]
-    public void Tets6()
+    public void Test6()
     {
-        List<string> inputs = new List<string>
-            {
-                "true",
-                "false",
-                "3 > 5 == false",
-                "3 < 5 == true",
-            };
+        List<string> inputs =
+        [
+            "true;",
+            "false;",
+            "3 > 5 == false;",
+            "3 < 5 == true;"
+        ];
 
-        List<string> expected = new List<string>
-            {
-                "true",
-                "false",
-                "((3 > 5) == false)",
-                "((3 < 5) == true)",
-            };
+        List<string> expected =
+        [
+            "true",
+            "false",
+            "((3 > 5) == false)",
+            "((3 < 5) == true)"
+        ];
 
         for (int i = 0; i < inputs.Count; i++)
         {
@@ -131,31 +130,31 @@ public class ParserTests
             var code = parser.ParseCode();
 
             CheckParserErrors(parser);
-
-            Assert.Equal(expected[i], code.statements[0].ToString());
+            Assert.NotEmpty(code.Statements);
+            Assert.Equal(expected[i], code.Statements[0].ToString());
         }
     }
 
     [Fact]
     public void Test7()
     {
-        List<string> inputs = new List<string>
-            {
-                "1 + (2 + 3) + 4",
-                "(5 + 5) * 2",
-                "2 / (5 + 5)",
-                "-(5 + 5)",
-                "!(true == true)"
-            };
+        List<string> inputs =
+        [
+            "1 + (2 + 3) + 4;",
+            "(5 + 5) * 2;",
+            "2 / (5 + 5);",
+            "-(5 + 5);",
+            "!(true == true);"
+        ];
 
-        List<string> expected = new List<string>
-            {
-                "((1 + (2 + 3)) + 4)",
-                "((5 + 5) * 2)",
-                "(2 / (5 + 5))",
-                "(-(5 + 5))",
-                "(!(true == true))"
-            };
+        List<string> expected =
+        [
+            "((1 + (2 + 3)) + 4)",
+            "((5 + 5) * 2)",
+            "(2 / (5 + 5))",
+            "(-(5 + 5))",
+            "(!(true == true))"
+        ];
 
         for (int i = 0; i < inputs.Count; i++)
         {
@@ -166,8 +165,8 @@ public class ParserTests
             var code = parser.ParseCode();
 
             CheckParserErrors(parser);
-
-            Assert.Equal(expected[i], code.statements[0].ToString());
+            Assert.NotEmpty(code.Statements);
+            Assert.Equal(expected[i], code.Statements[0].ToString());
         }
     }
 
@@ -184,8 +183,8 @@ public class ParserTests
         var code = parser.ParseCode();
 
         CheckParserErrors(parser);
-
-        Assert.Equal(expected, code.statements[0].ToString());
+        Assert.NotEmpty(code.Statements);
+        Assert.Equal(expected, code.Statements[0].ToString());
     }
 
     [Fact]
@@ -201,28 +200,28 @@ public class ParserTests
         var code = parser.ParseCode();
 
         CheckParserErrors(parser);
-
-        Assert.Equal(expected, code.statements[0].ToString());
+        Assert.NotEmpty(code.Statements);
+        Assert.Equal(expected, code.Statements[0].ToString());
     }
 
     [Fact]
     public void Test10()
     {
-        List<string> inputs = new List<string>()
-        {
+        List<string> inputs =
+        [
             "fn() {};",
             "fn(x) {};",
             "fn(x, y, z) {};",
-            "fn(x, y) {x + y}"
-        };
+            "fn(x, y) {x + y};"
+        ];
 
-        List<string> expected = new List<string>()
-        {
+        List<string> expected =
+        [
             "fn(){\n}",
             "fn(x){\n}",
             "fn(x,y,z){\n}",
-            "fn(x,y){\n(x + y)\n}",
-        };
+            "fn(x,y){\n(x + y)\n}"
+        ];
 
         for (int i = 0; i < inputs.Count; i++)
         {
@@ -233,27 +232,27 @@ public class ParserTests
             var code = parser.ParseCode();
 
             CheckParserErrors(parser);
-
-            Assert.Equal(expected[i], code.statements[0].ToString());
+            Assert.NotEmpty(code.Statements);
+            Assert.Equal(expected[i], code.Statements[0].ToString());
         }
     }
 
     [Fact]
     public void Test11()
     {
-        List<string> inputs = new List<string>()
-        {
+        List<string> inputs =
+        [
             "a + add(b * c) + d",
             "add(a, b, 1, 2 * 3, 4 + 5, add(6, 7 * 8))",
             "add(a + b + c * d / f + g)"
-        };
+        ];
 
-        List<string> expected = new List<string>()
-        {
+        List<string> expected =
+        [
             "((a + add((b * c))) + d)",
             "add(a,b,1,(2 * 3),(4 + 5),add(6,(7 * 8)))",
             "add((((a + b) + ((c * d) / f)) + g))"
-        };
+        ];
 
         for (int i = 0; i < inputs.Count; i++)
         {
@@ -264,8 +263,8 @@ public class ParserTests
             var code = parser.ParseCode();
 
             CheckParserErrors(parser);
-
-            Assert.Equal(expected[i], code.statements[0].ToString());
+            Assert.NotEmpty(code.Statements);
+            Assert.Equal(expected[i], code.Statements[0].ToString());
         }
 
     }
@@ -273,17 +272,17 @@ public class ParserTests
     [Fact]
     public void Test12()
     {
-        List<string> inputs = new List<string>()
-        {
+        List<string> inputs =
+        [
             "\"foobar\"",
             "\"hello world\";"
-        };
+        ];
 
-        List<string> expected = new List<string>()
-        {
+        List<string> expected =
+        [
             "foobar",
             "hello world"
-        };
+        ];
 
         for (int i = 0; i < inputs.Count; i++)
         {
@@ -294,8 +293,8 @@ public class ParserTests
             var code = parser.ParseCode();
 
             CheckParserErrors(parser);
-
-            Assert.Equal(expected[i], code.statements[0].ToString());
+            Assert.NotEmpty(code.Statements);
+            Assert.Equal(expected[i], code.Statements[0].ToString());
         }
 
     }
@@ -303,23 +302,23 @@ public class ParserTests
     [Fact]
     public void Test13()
     {
-        List<string> inputs = new List<string>()
-        {
+        List<string> inputs =
+        [
             "[1, 2 * 2, 3 + 3];",
             "[];",
             "a * b[2]",
             "b[1]",
             "2 * [1, 2][1]"
-        };
+        ];
 
-        List<string> expected = new List<string>()
-        {
+        List<string> expected =
+        [
             "[1,(2 * 2),(3 + 3)]",
             "[]",
             "(a * (b[2]))",
             "(b[1])",
             "(2 * ([1,2][1]))"
-        };
+        ];
 
         for (int i = 0; i < inputs.Count; i++)
         {
@@ -330,25 +329,25 @@ public class ParserTests
             var code = parser.ParseCode();
 
             CheckParserErrors(parser);
-
-            Assert.Equal(expected[i], code.statements[0].ToString());
+            Assert.NotEmpty(code.Statements);
+            Assert.Equal(expected[i], code.Statements[0].ToString());
         }
     }
 
     [Fact]
     public void Test14()
     {
-        List<string> inputs = new List<string>()
-        {
+        List<string> inputs =
+        [
             "a * [1, 2, 3, 4][b * c] * d;",
             "add(a * b[2], b[1], 2 * [1, 2][1]);"
-        };
+        ];
 
-        List<string> expected = new List<string>()
-        {
+        List<string> expected =
+        [
             "((a * ([1,2,3,4][(b * c)])) * d)",
             "add((a * (b[2])),(b[1]),(2 * ([1,2][1])))"
-        };
+        ];
 
         for (int i = 0; i < inputs.Count; i++)
         {
@@ -359,23 +358,19 @@ public class ParserTests
             var code = parser.ParseCode();
 
             CheckParserErrors(parser);
-
-            Assert.Equal(expected[i], code.statements[0].ToString());
+            Assert.NotEmpty(code.Statements);
+            Assert.Equal(expected[i], code.Statements[0].ToString());
         }
     }
-
-    bool CheckParserErrors(Parser parser)
+    
+    private void CheckParserErrors(Parser parser)
     {
-        List<string> errors = parser.errors;
-        if (errors.Count == 0)
-        {
-            return false;
-        }
+        List<string> errors = parser.Errors;
+        
         output.WriteLine($"Parser has {errors.Count} errors.");
         foreach (var item in errors)
         {
             output.WriteLine($"Parser error: {item}");
         }
-        return true;
     }
 }
