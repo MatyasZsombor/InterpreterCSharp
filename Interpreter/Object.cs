@@ -1,156 +1,93 @@
-﻿using System;
-namespace Interpreter
+﻿namespace Interpreter;
+
+public enum ObjectType
 {
-    public enum ObjectType
-    {
-        INTEGER,
-        BOOLEAN,
-        STRING,
-        NULL,
-        RETURNVALUE,
-        ERROR,
-        FUNCTION,
-        BUILTIN,
-        ARRAY
-    }
-    public interface EvObject
-    {
-        ObjectType Type();
-        string Inspect();
-    }
+    Integer,
+    Boolean,
+    String,
+    Null,
+    ReturnValue,
+    Error,
+    Function,
+    Builtin,
+    Array
+}
 
-    public class Array : EvObject
-    {
-        public List<EvObject> elements { get; set; }
+public interface IEvObject
+{
+    ObjectType Type();
+    string Inspect();
+}
 
-        public ObjectType Type()
-        {
-            return ObjectType.ARRAY;
-        }
+public class Array : IEvObject
+{
+    public required List<IEvObject> Elements { get; init; }
+    
+    public ObjectType Type() => ObjectType.Array;
+    
+    public string Inspect()
+    => $"[{string.Join(", ",  Elements.Select(x => x.Inspect()))}]";
+}
 
-        public string Inspect()
-        {
-            List<string> el = new List<string>();
+public class Error : IEvObject
+{
+    public required string Message { get; init; }
+    
+    public ObjectType Type() => ObjectType.Error;
+    
+    public string Inspect() => "Error " + Message;
+}
 
-            foreach (var e in elements)
-            {
-                el.Add(e.Inspect());
-            }
+public class Integer : IEvObject
+{
+    public double Value { get; init; }
+    
+    public ObjectType Type() => ObjectType.Integer;
+    
+    public string Inspect() => Value.ToString("");
+}
 
-            return "[" + string.Join(", ", el) + "]";
-        }
-    }
+public class String : IEvObject
+{
+    public required string Value { get; init; }
+    
+    public ObjectType Type() => ObjectType.String;
+    
+    public string Inspect() => Value;
+}
 
-    public class Error : EvObject
-    {
-        public string message { get; set; }
+public class Boolean : IEvObject
+{
+    public bool Value { get; init; }
+    
+    public ObjectType Type() => ObjectType.Boolean;
+    
+    public string Inspect() => Value.ToString().ToLower();
+}
 
-        public ObjectType Type()
-        {
-            return ObjectType.ERROR;
-        }
+public class Null : IEvObject
+{
+    public ObjectType Type() => ObjectType.Null;
+    
+    public string Inspect() => "null";
+}
 
-        public string Inspect()
-        {
-            return "Error " + message;
-        }
-    }
+public class ReturnValue : IEvObject
+{
+    public required IEvObject Value { get; init; }
+    
+    public ObjectType Type() => ObjectType.ReturnValue;
+    
+    public string Inspect() => Value.Inspect();
+}
 
-    public class Integer : EvObject
-    {
-        public double value { get; set; }
-
-        public ObjectType Type()
-        {
-            return ObjectType.INTEGER;
-        }
-
-        public string Inspect()
-        {
-            return value.ToString("");
-        }
-    }
-
-    public class String : EvObject
-    {
-        public string value { get; set; }
-
-        public ObjectType Type()
-        {
-            return ObjectType.STRING;
-        }
-
-        public string Inspect()
-        {
-            return value;
-        }
-    }
-
-    public class Boolean : EvObject
-    {
-        public bool value { get; set; }
-
-        public ObjectType Type()
-        {
-            return ObjectType.BOOLEAN;
-        }
-
-        public string Inspect()
-        {
-            return value.ToString().ToLower();
-        }
-    }
-
-    public class Null : EvObject
-    {
-        public ObjectType Type()
-        {
-            return ObjectType.NULL;
-        }
-
-        public string Inspect()
-        {
-            return "null";
-        }
-    }
-
-    public class ReturnValue : EvObject
-    {
-        public EvObject value { get; set; }
-
-        public ObjectType Type()
-        {
-            return ObjectType.RETURNVALUE;
-        }
-
-        public string Inspect()
-        {
-            return value.Inspect();
-        }
-    }
-
-    public class Function : EvObject
-    {
-        public List<Identifier> parameters { get; set; }
-        public BlockStatement body { get; set; }
-        public Environment environment { get; set; }
-
-        public ObjectType Type()
-        {
-            return ObjectType.FUNCTION;
-        }
-
-        public string Inspect()
-        {
-            string str = "";
-            str += "fn(";
-            str += "fn(";
-            str += string.Join(",", from parameter in parameters select parameter.TokenLiteral());
-            str += ") {\n";
-            str += body.ToString();
-            str += "\n}";
-
-            return str;
-        }
-    }
+public class Function : IEvObject
+{
+    public required List<Identifier> Parameters { get; init; }
+    public required BlockStatement Body { get; init; }
+    public required Environment Environment { get; init; }
+    
+    public ObjectType Type() => ObjectType.Function;
+    
+    public string Inspect() => $"fn({string.Join(",", Parameters.Select(x => x.TokenLiteral()))}){{\n{Body}\n}}";
 }
