@@ -39,6 +39,7 @@ public enum TokenType
     False,
     If,
     Else,
+    While,
     Return
 }
 
@@ -57,6 +58,7 @@ public struct Token
                    "false"  => TokenType.False,
                    "if"     => TokenType.If,
                    "else"   => TokenType.Else,
+                   "while"  => TokenType.While,
                    "return" => TokenType.Return,
                    _        => TokenType.Ident
                };

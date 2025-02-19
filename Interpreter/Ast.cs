@@ -199,6 +199,17 @@ public class IfExpression : IExpression
     }
 }
 
+public class WhileExpression : IExpression
+{
+    public Token Token { get; init; }
+    public required IExpression Condition { get; init; }
+    public required BlockStatement Body { get; init; }
+    
+    public string TokenLiteral() => Token.Literal;
+    
+    public override string ToString() => $"while {Condition} {Body}";
+}
+
 public class StringLiteral : IExpression
 {
     public Token Token { get; init; }

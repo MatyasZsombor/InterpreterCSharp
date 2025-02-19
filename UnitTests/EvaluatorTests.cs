@@ -290,4 +290,36 @@ public class EvaluatorTests
             Assert.Equal(expected[i], ((Array)result).Inspect());
         }
     }
+
+    [Fact]
+    public void Test7()
+    {
+        List<string> inputs =
+        [
+            "let i = 0; while (i < 10) { let i = i + 1; i}",
+            "let i = 0; let sum = 0; while (i < 10) { let i = i + 1; let sum = sum + i; sum} "
+        ];
+        
+        List<string> expected =
+        [
+            "[1, 4, 6]",
+            "[]"
+        ];
+        
+        for (int i = 0; i < inputs.Count; i++)
+        {
+            Lexer lexer = new Lexer(inputs[i]);
+            Parser parser = new Parser(lexer);
+            
+            var program = parser.ParseCode();
+            Evaluator evaluator = new Evaluator();
+            
+            Environment environment = new Environment();
+            
+            var result = evaluator.Eval(program, environment);
+            
+            Assert.NotNull(result);
+            Assert.Equal(expected[i], ((Array)result).Inspect());
+        }
+    }
 }

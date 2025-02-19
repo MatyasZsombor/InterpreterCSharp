@@ -5,7 +5,7 @@ public class LexerTests
     [Fact]
     public void Test1()
     {
-        const string Input = "4 + 3 - 2 * 5 10 + (2 + 3) 3 1 2";
+        const string input = "4 + 3 - 2 * 5 10 + (2 + 3) 3 1 2";
         
         List<Token> expected =
         [
@@ -118,7 +118,7 @@ public class LexerTests
             }
         ];
         
-        Lexer lexer = new Lexer(Input);
+        Lexer lexer = new Lexer(input);
         
         foreach (var t in expected)
         {
@@ -130,7 +130,7 @@ public class LexerTests
     [Fact]
     public void Test2()
     {
-        const string Input = "! != ==";
+        const string input = "! != ==";
         List<Token> expected =
         [
             new Token
@@ -158,7 +158,7 @@ public class LexerTests
             }
         ];
         
-        Lexer lexer = new Lexer(Input);
+        Lexer lexer = new Lexer(input);
         foreach (var t in expected)
         {
             var curToken = lexer.NextToken();
@@ -169,7 +169,7 @@ public class LexerTests
     [Fact]
     public void Test3()
     {
-        const string Input = "\"foobar\" \"foo bar\" ";
+        const string input = "\"foobar\" \"foo bar\" ";
         List<Token> expected =
         [
             new Token
@@ -191,7 +191,7 @@ public class LexerTests
             }
         ];
         
-        Lexer lexer = new Lexer(Input);
+        Lexer lexer = new Lexer(input);
         foreach (var t in expected)
         {
             var curToken = lexer.NextToken();
@@ -202,7 +202,7 @@ public class LexerTests
     [Fact]
     public void Test4()
     {
-        const string Input = "[1, 2, 3]";
+        const string input = "[1, 2, 3]";
         List<Token> expected =
         [
             new Token
@@ -254,7 +254,7 @@ public class LexerTests
             }
         ];
         
-        Lexer lexer = new Lexer(Input);
+        Lexer lexer = new Lexer(input);
         foreach (var t in expected)
         {
             var curToken = lexer.NextToken();

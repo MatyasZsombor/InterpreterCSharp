@@ -107,10 +107,7 @@ public static class Repl
             
             var evaluated = evaluator.Eval(program, environment);
             
-            if (evaluated.Type() == ObjectType.Error)
-            {
-                Console.WriteLine(evaluated.Inspect());
-            }
+            Console.WriteLine(evaluated.Inspect());
         }
     }
 }

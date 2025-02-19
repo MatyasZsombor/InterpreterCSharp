@@ -363,6 +363,37 @@ public class ParserTests(ITestOutputHelper output)
         }
     }
     
+    [Fact]
+    public void Test15()
+    {
+        List<string> inputs =
+        [
+            "while(x < y){}",
+            "while(x < y){x}",
+            "while(x < y){x + y}"
+        ];
+
+        List<string> expected =
+        [
+            "while (x < y) {\n}",
+            "while (x < y) {\nx\n}",
+            "while (x < y) {\n(x + y)\n}"
+        ];
+
+        for (int i = 0; i < inputs.Count; i++)
+        {
+            Lexer lexer = new Lexer(inputs[i]);
+
+            Parser parser = new Parser(lexer);
+
+            var code = parser.ParseCode();
+
+            CheckParserErrors(parser);
+            Assert.NotEmpty(code.Statements);
+            Assert.Equal(expected[i], code.Statements[0].ToString());
+        }
+    }
+    
     private void CheckParserErrors(Parser parser)
     {
         List<string> errors = parser.Errors;

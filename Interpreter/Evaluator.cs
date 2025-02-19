@@ -2,9 +2,9 @@
 
 public class Evaluator
 {
-    private static readonly Boolean @true = new() { Value = true };
-    private static readonly Boolean @false = new() { Value = false };
-    private static readonly Null @null = new();
+    private static readonly Boolean True = new() { Value = true };
+    private static readonly Boolean False = new() { Value = false };
+    private static readonly Null Null = new();
     
     public IEvObject Eval(INode? node, Environment environment)
     {
@@ -43,7 +43,7 @@ public class Evaluator
                 return new String { Value = stringLiteral.Value };
             
             case BooleanLiteral booleanLiteral:
-                return booleanLiteral.Value ? @true : @false;
+                return booleanLiteral.Value ? True : False;
             
             case ExpressionStatement expressionStatement:
                 return Eval(expressionStatement.Expression, environment);
@@ -69,6 +69,9 @@ public class Evaluator
             
             case IfExpression ifExpression:
                 return EvalIfExpression(ifExpression, environment);
+            
+            case WhileExpression whileExpression:
+                return EvalWhileExpression(whileExpression, environment);
             
             case ReturnStatement returnStatement:
                 var value = Eval(returnStatement.Value, environment);
@@ -114,9 +117,9 @@ public class Evaluator
                 return ApplyFunction(function, args);
         }
         
-        return @null;
+        return Null;
     }
-    
+
     private static IEvObject EvalIndexExpression(IEvObject left, IEvObject index)
     {
         if (left.Type() == ObjectType.Array && index.Type() == ObjectType.Integer)
@@ -216,7 +219,7 @@ public class Evaluator
     
     private IEvObject EvalBlockStatement(BlockStatement blockStatement, Environment environment)
     {
-        IEvObject result = @null;
+        IEvObject result = Null;
         
         foreach (var stmt in blockStatement.Statements)
         {
@@ -245,20 +248,48 @@ public class Evaluator
             return Eval(ifExpression.Consequence, environment);
         }
         
-        return ifExpression.Alternative != null ? Eval(ifExpression.Alternative, environment) : @null;
+        return ifExpression.Alternative != null ? Eval(ifExpression.Alternative, environment) : Null;
+    }
+    
+    private IEvObject EvalWhileExpression(WhileExpression whileExpression, Environment environment)
+    {
+        var condition = Eval(whileExpression.Condition, environment);
+        
+        if (IsError(condition))
+        {
+            return condition;
+        }
+
+        Array result = new Array { Elements = [] };
+        
+        while (IsTruthy(condition))
+        { 
+            IEvObject r = Eval(whileExpression.Body, environment);
+            
+            if (r.Type() == ObjectType.Error)
+            {
+                return new Array { Elements = [r] };
+            }
+            
+            result.Elements.Add(r);
+            
+            condition = Eval(whileExpression.Condition, environment);
+        }
+
+        return result;
     }
     
     private static bool IsTruthy(IEvObject evObject) =>
         evObject switch
         {
-            Boolean b => b == @true,
+            Boolean b => b == True,
             Integer i => i.Value != 0,
             _         => true
         };
     
     private IEvObject EvalProgram(Code code, Environment environment)
     {
-        IEvObject result = @null;
+        IEvObject result = Null;
         
         foreach (var stmt in code.Statements)
         {
@@ -316,25 +347,25 @@ public class Evaluator
                 {
                     bool temp = ((Boolean)left).Value != ((Boolean)right).Value;
                     
-                    return temp ? @true : @false;
+                    return temp ? True : False;
                 }
                 case "==":
                 {
                     bool temp = ((Boolean)left).Value == ((Boolean)right).Value;
                     
-                    return temp ? @true : @false;
+                    return temp ? True : False;
                 }
                 case "||":
                 {
                     bool temp = ((Boolean)left).Value || ((Boolean)right).Value;
                     
-                    return temp ? @true : @false;
+                    return temp ? True : False;
                 }
                 case "&&":
                 {
                     bool temp = ((Boolean)left).Value && ((Boolean)right).Value;
                     
-                    return temp ? @true : @false;
+                    return temp ? True : False;
                 }
             }
         }
@@ -380,16 +411,16 @@ public class Evaluator
                 return new Integer { Value = leftVal / rightVal };
             
             case "<":
-                return leftVal < rightVal ? @true : @false;
+                return leftVal < rightVal ? True : False;
             
             case ">":
-                return leftVal > rightVal ? @true : @false;
+                return leftVal > rightVal ? True : False;
             
             case "==":
-                return leftVal == rightVal ? @true : @false;
+                return leftVal == rightVal ? True : False;
             
             case "!=":
-                return leftVal != rightVal ? @true : @false;
+                return leftVal != rightVal ? True : False;
             
             default:
                 return CreateError($"unknown operator: {left.Type()} {op} {right.Type()}");
@@ -400,7 +431,7 @@ public class Evaluator
     {
         if (right.Type() == ObjectType.Boolean)
         {
-            return !((Boolean)right).Value ? @true : @false;
+            return !((Boolean)right).Value ? True : False;
         }
         
         return CreateError($"unknown operator: !{right.Type()}");

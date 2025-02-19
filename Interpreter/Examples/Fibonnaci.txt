@@ -1,16 +1,21 @@
 ﻿let fibonacci = fn(x)
 {
-  if(x == 0 || x == 1)
+  let f = 0;
+  let s = 1;
+  
+  return while (x > 0)
   {
-    return x;
-  }
-  else
-  {
-    return fibonacci(x - 1) + fibonacci(x - 2); 
-  }
+    let x = x - 1;
+    let t = f;
+    
+    let f = s;
+    let s = t + s;
+    
+    t;   
+  };
+    
 };
 
 let y = get();
-let fib = fibonacci(y - 1);
-put("The " + string(y) + ". Fibonacci number is: " + string(fib));
-write("/Users/matyaszsombor/Projects/Interpreter/fib.txt", fib);
+let fib = fibonacci(y);
+put(fib);

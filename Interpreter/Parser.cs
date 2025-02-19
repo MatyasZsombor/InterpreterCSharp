@@ -39,6 +39,7 @@ public class Parser
         RegisterPrefix(TokenType.Bang, new PrefixOperatorParslet());
         RegisterPrefix(TokenType.Lparen, new GroupedExpressionParslet());
         RegisterPrefix(TokenType.If, new IfExpressionParslet());
+        RegisterPrefix(TokenType.While, new WhileExpressionParslet());
         RegisterPrefix(TokenType.Function, new FunctionLiteralParslet());
         RegisterPrefix(TokenType.String, new StringLiteralParslet());
         RegisterPrefix(TokenType.Lbracket, new ArrayLiteralParslet());
@@ -387,7 +388,27 @@ public class Parser
             return ifExpression;
         }
     }
-    
+
+    private class WhileExpressionParslet : IPrefixParslet
+    {
+        public IExpression Parse(Parser parser, Token token)
+        {
+            parser.ExpectPeek(TokenType.Lparen);
+            
+            parser.NextToken();
+            
+            IExpression condition = parser.ParseExpression(BindingPower.Lowest);
+            
+            parser.ExpectPeek(TokenType.Rparen);
+            
+            parser.ExpectPeek(TokenType.Lbrace);
+            
+            BlockStatement body = BlockStatementParslet.Parse(parser);
+            
+            return new WhileExpression { Token = token, Condition = condition, Body = body };
+        }
+    }
+   
     private class FunctionLiteralParslet : IPrefixParslet
     {
         public IExpression Parse(Parser parser, Token token)
