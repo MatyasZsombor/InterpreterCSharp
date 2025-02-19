@@ -296,14 +296,14 @@ public class EvaluatorTests
     {
         List<string> inputs =
         [
-            "let i = 0; while (i < 10) { let i = i + 1; i}",
+            "let i = 0; while (i < 3) { let i = i + 1; i}",
             "let i = 0; let sum = 0; while (i < 10) { let i = i + 1; let sum = sum + i; sum} "
         ];
         
         List<string> expected =
         [
-            "[1, 4, 6]",
-            "[]"
+            "[1, 2, 3]",
+            "[1, 3, 6, 10, 15, 21, 28, 36, 45, 55]"
         ];
         
         for (int i = 0; i < inputs.Count; i++)

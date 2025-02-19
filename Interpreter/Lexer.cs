@@ -101,6 +101,9 @@ public class Lexer
             case ';':
                 token = NewToken(TokenType.Semicolon, ";");
                 break;
+            case '.':
+                token = NewToken(TokenType.Period, ".");
+                break;
             case '(':
                 token = NewToken(TokenType.Lparen, "(");
                 break;

@@ -57,7 +57,11 @@ public class ParserTests(ITestOutputHelper output)
             "5 > 5;",
             "5 < 5;",
             "5 == 5;",
-            "5 != 5;"
+            "5 != 5;",
+            "4.5 + 5.5;",
+            "4.5 - 5.5;",
+            "4.5 * 5.5;",
+            "4.5 / 5.5;",
         ];
 
         List<string> results =
@@ -69,7 +73,11 @@ public class ParserTests(ITestOutputHelper output)
             "(5 > 5)",
             "(5 < 5)",
             "(5 == 5)",
-            "(5 != 5)"
+            "(5 != 5)",
+            "(4.5 + 5.5)",
+            "(4.5 - 5.5)",
+            "(4.5 * 5.5)",
+            "(4.5 / 5.5)"
         ];
 
         for (int i = 0; i < inputs.Count; i++)

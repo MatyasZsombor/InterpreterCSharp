@@ -333,8 +333,20 @@ public class Parser
     
     private class IntegerParslet : IPrefixParslet
     {
-        public IExpression Parse(Parser parser, Token token) =>
-            new IntegerLiteral { Token = token, Value = int.Parse(token.Literal)};
+        public IExpression Parse(Parser parser, Token token)
+        {
+            if (!parser.PeekTokenIs(TokenType.Period))
+            {
+                return new IntegerLiteral { Token = token, Value = int.Parse(token.Literal) };
+            }
+
+            parser.NextToken();
+            parser.ExpectPeek(TokenType.Int);
+
+            return new FloatLiteral
+                { Token = token, Value = float.Parse(token.Literal + "." + parser._curToken.Literal) };
+
+        }
     }
     
     private class BooleanParslet : IPrefixParslet

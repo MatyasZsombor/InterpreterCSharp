@@ -3,6 +3,7 @@
 public enum ObjectType
 {
     Integer,
+    Float,
     Boolean,
     String,
     Null,
@@ -43,6 +44,15 @@ public class Integer : IEvObject
     public int Value { get; init; }
     
     public ObjectType Type() => ObjectType.Integer;
+    
+    public string Inspect() => Value.ToString("");
+}
+
+public class Float : IEvObject
+{
+    public double Value { get; init; }
+    
+    public ObjectType Type() => ObjectType.Float;
     
     public string Inspect() => Value.ToString("");
 }

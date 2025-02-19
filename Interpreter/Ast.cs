@@ -1,4 +1,6 @@
-﻿namespace Interpreter;
+﻿using System.Globalization;
+
+namespace Interpreter;
 
 public interface INode
 {
@@ -105,6 +107,16 @@ public class IntegerLiteral : IExpression
     public string TokenLiteral() => Token.Literal;
     
     public override string ToString() => Token.Literal;
+}
+
+public class FloatLiteral : IExpression
+{
+    public Token Token { get; init; }
+    public required float Value { get; init; }
+    
+    public string TokenLiteral() => Token.Literal;
+    
+    public override string ToString() => Value.ToString(CultureInfo.InvariantCulture);
 }
 
 public class BooleanLiteral : IExpression

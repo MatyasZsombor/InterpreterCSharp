@@ -39,6 +39,9 @@ public class Evaluator
             case IntegerLiteral integerLiteral:
                 return new Integer { Value = integerLiteral.Value };
             
+            case FloatLiteral floatLiteral:
+                return new Float { Value = floatLiteral.Value };
+            
             case StringLiteral stringLiteral:
                 return new String { Value = stringLiteral.Value };
             
@@ -317,26 +320,26 @@ public class Evaluator
         return result;
     }
     
-    private IEvObject EvalPrefixExpression(string op, IEvObject right)
+    private static IEvObject EvalPrefixExpression(string op, IEvObject right)
     {
-        switch (op)
+        return op switch
         {
-            case "!":
-                return EvalBangExpression(right);
-            
-            case "-":
-                return EvalMinusExpression(right);
-            
-            default:
-                return CreateError($"unknown operator: {op}{right.Type}");
-        }
+            "!" => EvalBangExpression(right),
+            "-" => EvalMinusExpression(right),
+            _ => CreateError($"unknown operator: {op}{right.Type()}")
+        };
     }
     
-    private IEvObject EvalInfixExpression(string op, IEvObject right, IEvObject left)
+    private static IEvObject EvalInfixExpression(string op, IEvObject right, IEvObject left)
     {
         if (right.Type() == ObjectType.Integer && left.Type() == ObjectType.Integer)
         {
             return EvalIntegerInfixExpression(op, right, left);
+        }
+        
+        if (right.Type() == ObjectType.Float && left.Type() == ObjectType.Float)
+        {
+            return EvalFloatInfixExpression(op, right, left);
         }
         
         if (right.Type() == ObjectType.Boolean && left.Type() == ObjectType.Boolean)
@@ -381,7 +384,7 @@ public class Evaluator
         return CreateError($"unknown operator: {left.Type()} {op} {right.Type()}");
     }
     
-    private IEvObject EvalStringInfixExpression(string op, IEvObject left, IEvObject right)
+    private static IEvObject EvalStringInfixExpression(string op, IEvObject left, IEvObject right)
     {
         if (op != "+")
         {
@@ -391,40 +394,42 @@ public class Evaluator
         return new String { Value = ((String)left).Value + ((String)right).Value };
     }
     
-    private IEvObject EvalIntegerInfixExpression(string op, IEvObject right, IEvObject left)
+    private static IEvObject EvalIntegerInfixExpression(string op, IEvObject right, IEvObject left)
     {
         var leftVal = ((Integer)left).Value;
         var rightVal = ((Integer)right).Value;
-        
-        switch (op)
+
+        return op switch
         {
-            case "+":
-                return new Integer { Value = leftVal + rightVal };
-            
-            case "-":
-                return new Integer { Value = leftVal - rightVal };
-            
-            case "*":
-                return new Integer { Value = leftVal * rightVal };
-            
-            case "/":
-                return new Integer { Value = leftVal / rightVal };
-            
-            case "<":
-                return leftVal < rightVal ? True : False;
-            
-            case ">":
-                return leftVal > rightVal ? True : False;
-            
-            case "==":
-                return leftVal == rightVal ? True : False;
-            
-            case "!=":
-                return leftVal != rightVal ? True : False;
-            
-            default:
-                return CreateError($"unknown operator: {left.Type()} {op} {right.Type()}");
-        }
+            "+" => new Integer { Value = leftVal + rightVal },
+            "-" => new Integer { Value = leftVal - rightVal },
+            "*" => new Integer { Value = leftVal * rightVal },
+            "/" => new Integer { Value = leftVal / rightVal },
+            "<" => leftVal < rightVal ? True : False,
+            ">" => leftVal > rightVal ? True : False,
+            "==" => leftVal == rightVal ? True : False,
+            "!=" => leftVal != rightVal ? True : False,
+            _ => CreateError($"unknown operator: {left.Type()} {op} {right.Type()}")
+        };
+    }
+    
+    private static IEvObject EvalFloatInfixExpression(string op, IEvObject right, IEvObject left)
+    {
+        var leftVal = ((Float)left).Value;
+        var rightVal = ((Float)right).Value;
+
+        return op switch
+        {
+            "+" => new Float { Value = leftVal + rightVal },
+            "-" => new Float { Value = leftVal - rightVal },
+            "*" => new Float { Value = leftVal * rightVal },
+            "/" => new Float { Value = leftVal / rightVal },
+            "<" => leftVal < rightVal ? True : False,
+            ">" => leftVal > rightVal ? True : False,
+            "==" => Math.Abs(leftVal - rightVal) < double.Epsilon ? True : False,
+            "!=" => Math.Abs(leftVal - rightVal) > double.Epsilon ? True : False,
+            _ => CreateError($"unknown operator: {left.Type()} {op} {right.Type()}")
+        };
     }
     
     private static IEvObject EvalBangExpression(IEvObject right)
@@ -439,11 +444,11 @@ public class Evaluator
     
     private static IEvObject EvalMinusExpression(IEvObject right)
     {
-        if (right.Type() != ObjectType.Integer)
+        if (right.Type() != ObjectType.Integer && right.Type() != ObjectType.Float)
         {
             return CreateError($"unknown operator: -{right.Type()}");
         }
         
-        return new Integer { Value = -((Integer)right).Value };
+        return right.Type() == ObjectType.Integer ? new Integer { Value = -((Integer)right).Value } : new Float { Value = -((Float)right).Value };
     }
 }

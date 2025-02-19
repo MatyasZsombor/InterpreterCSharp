@@ -9,109 +9,109 @@ public class LexerTests
         
         List<Token> expected =
         [
-            new Token
+            new()
             {
                 Type = TokenType.Int,
                 Literal = "4"
             },
             
-            new Token
+            new()
             {
                 Type = TokenType.Plus,
                 Literal = "+"
             },
             
-            new Token
+            new()
             {
                 Type = TokenType.Int,
                 Literal = "3"
             },
             
-            new Token
+            new()
             {
                 Type = TokenType.Minus,
                 Literal = "-"
             },
             
-            new Token
+            new()
             {
                 Type = TokenType.Int,
                 Literal = "2"
             },
             
-            new Token
+            new()
             {
                 Type = TokenType.Asterisk,
                 Literal = "*"
             },
             
-            new Token
+            new()
             {
                 Type = TokenType.Int,
                 Literal = "5"
             },
             
-            new Token
+            new()
             {
                 Type = TokenType.Int,
                 Literal = "10"
             },
             
-            new Token
+            new()
             {
                 Type = TokenType.Plus,
                 Literal = "+"
             },
             
-            new Token
+            new()
             {
                 Type = TokenType.Lparen,
                 Literal = "("
             },
             
-            new Token
+            new()
             {
                 Type = TokenType.Int,
                 Literal = "2"
             },
             
-            new Token
+            new()
             {
                 Type = TokenType.Plus,
                 Literal = "+"
             },
             
-            new Token
+            new()
             {
                 Type = TokenType.Int,
                 Literal = "3"
             },
             
-            new Token
+            new()
             {
                 Type = TokenType.Rparen,
                 Literal = ")"
             },
             
-            new Token
+            new()
             {
                 Type = TokenType.Int,
                 Literal = "3"
             },
             
-            new Token
+            new()
             {
                 Type = TokenType.Int,
                 Literal = "1"
             },
             
-            new Token
+            new()
             {
                 Type = TokenType.Int,
                 Literal = "2"
             },
             
-            new Token
+            new()
             {
                 Type = TokenType.Eof,
                 Literal = ""
@@ -133,25 +133,25 @@ public class LexerTests
         const string input = "! != ==";
         List<Token> expected =
         [
-            new Token
+            new()
             {
                 Type = TokenType.Bang,
                 Literal = "!"
             },
             
-            new Token
+            new()
             {
                 Type = TokenType.NotEq,
                 Literal = "!="
             },
             
-            new Token
+            new()
             {
                 Type = TokenType.Eq,
                 Literal = "=="
             },
             
-            new Token
+            new()
             {
                 Type = TokenType.Eof,
                 Literal = ""
@@ -172,19 +172,19 @@ public class LexerTests
         const string input = "\"foobar\" \"foo bar\" ";
         List<Token> expected =
         [
-            new Token
+            new()
             {
                 Type = TokenType.String,
                 Literal = "foobar"
             },
             
-            new Token
+            new()
             {
                 Type = TokenType.String,
                 Literal = "foo bar"
             },
             
-            new Token
+            new()
             {
                 Type = TokenType.Eof,
                 Literal = ""
@@ -205,49 +205,49 @@ public class LexerTests
         const string input = "[1, 2, 3]";
         List<Token> expected =
         [
-            new Token
+            new()
             {
                 Type = TokenType.Lbracket,
                 Literal = "["
             },
             
-            new Token
+            new()
             {
                 Type = TokenType.Int,
                 Literal = "1"
             },
             
-            new Token
+            new()
             {
                 Type = TokenType.Comma,
                 Literal = ","
             },
             
-            new Token
+            new()
             {
                 Type = TokenType.Int,
                 Literal = "2"
             },
             
-            new Token
+            new()
             {
                 Type = TokenType.Comma,
                 Literal = ","
             },
             
-            new Token
+            new()
             {
                 Type = TokenType.Int,
                 Literal = "3"
             },
             
-            new Token
+            new()
             {
                 Type = TokenType.Rbracket,
                 Literal = "]"
             },
             
-            new Token
+            new()
             {
                 Type = TokenType.Eof,
                 Literal = ""

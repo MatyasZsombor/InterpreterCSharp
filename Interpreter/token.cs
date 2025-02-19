@@ -25,6 +25,7 @@ public enum TokenType
     
     Comma,
     Semicolon,
+    Period,
     
     Lparen,
     Rparen,
