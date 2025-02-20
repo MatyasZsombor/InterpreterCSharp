@@ -19,5 +19,19 @@ let sum = fn(arr)
     reduce(arr, 0, fn(initial, el) { initial + el });
 };
 
+fn sum2(arr){
+ let sum = 0;
+ 
+ let i = 0;
+ 
+ while(i < len(arr)){
+  sum = sum + arr[i];
+  i = i + 1;
+ }
+ 
+ sum
+}
+
 let array = get();
 put(sum(array));
+put(sum2(array));

@@ -30,7 +30,7 @@ public class BuiltIns
             }
         };
         
-        /*
+        
         BuiltInFunctions["first"] = new BuiltIn
         {
             Fn = objects =>
@@ -42,9 +42,9 @@ public class BuiltIns
                 
                 return objects[0].Type() != ObjectType.Array ? new Error { Message = $"argument to first not supported, got {objects[0].Type()}" } : ((Array)objects[0]).Elements[0];
             }
-        };*/
+        };
         
-        /*
+        
         BuiltInFunctions["last"] = new BuiltIn
         {
             Fn = objects =>
@@ -56,9 +56,9 @@ public class BuiltIns
                 
                 return objects[0].Type() != ObjectType.Array ? new Error { Message = $"argument to last not supported, got {objects[0].Type()}" } : ((Array)objects[0]).Elements[^1];
             }
-        };*/
+        };
         
-        /*
+        
         BuiltInFunctions["rest"] = new BuiltIn
         {
             Fn = objects =>
@@ -82,9 +82,9 @@ public class BuiltIns
                 }
                 return new Array { Elements = elements };
             }
-        };*/
+        };
         
-        /*
+        
         BuiltInFunctions["push"] = new BuiltIn
         {
             Fn = objects =>
@@ -104,9 +104,9 @@ public class BuiltIns
                 
                 return new Array { Elements = newItems };
             }
-        };*/
+        };
         
-        /*
+        
         BuiltInFunctions["contains"] = new BuiltIn
         {
             Fn = objects =>
@@ -124,7 +124,7 @@ public class BuiltIns
                 
                 return ((Array)objects[0]).Elements.Contains(objects[1]) ? new Boolean { Value = true } : new Boolean { Value = false };
             }
-        };*/
+        };
         
         BuiltInFunctions["string"] = new BuiltIn
         {
@@ -139,7 +139,7 @@ public class BuiltIns
             }
         };
         
-        /*
+        
         BuiltInFunctions["add"] = new BuiltIn
         {
             
@@ -160,7 +160,7 @@ public class BuiltIns
             }
         };
         
-        /*
+        
         BuiltInFunctions["delete"] = new BuiltIn
         {
             Fn = objects =>
@@ -193,7 +193,7 @@ public class BuiltIns
             }
         };
         
-        /*
+        
         BuiltInFunctions["sort"] = new BuiltIn
         {
             Fn = objects =>
@@ -248,7 +248,7 @@ public class BuiltIns
                 
                 return new Array { Elements = newElements };
             }
-        };*/
+        };
         
         BuiltInFunctions["put"] = new BuiltIn
         {

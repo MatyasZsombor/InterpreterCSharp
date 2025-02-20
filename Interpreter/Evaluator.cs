@@ -120,23 +120,36 @@ public class Evaluator
                 var body = functionLiteral.Body;
                 
                 return new Function { Parameters = parameters, Body = body, Environment = environment };
-            
+
+            case FunctionStatement functionStatement:
+            {
+                var function = new Function
+                {
+                    Parameters = functionStatement.Parameters, Body = functionStatement.Body, Environment = environment
+                };
+                environment.Set(functionStatement.Name.Value, function);
+
+                break;
+            }
+
             case CallExpression callExpression:
+            {
                 var function = Eval(callExpression.Function, environment);
-                
+
                 if (IsError(function))
                 {
                     return function;
                 }
-                
+
                 List<IEvObject> args = EvalExpressions(callExpression.Arguments, environment);
-                
+
                 if (args.Count == 1 && IsError(args[0]))
                 {
                     return args[0];
                 }
-                
+
                 return ApplyFunction(function, args);
+            }
         }
         
         return Null;

@@ -77,6 +77,22 @@ public class AssignStatement : IStatement
     public override string ToString() => $"{Name} = {Value}";
 }
 
+public class FunctionStatement : IStatement
+{
+    public Token Token { get; init; }
+    public required Identifier Name { get; init; }
+    public List<Identifier> Parameters { get; init; } = [];
+    public required BlockStatement Body { get; init; }
+    
+    public string TokenLiteral() => Token.Literal;
+    
+    public override string ToString()
+    {
+        
+        return "fn " + Name + "(" + string.Join(",", Parameters.Select(x => x.ToString())) + ")" + Body;
+    }
+}
+
 public class ReturnStatement : IStatement
 {
     public Token Token { get; init; }
@@ -151,17 +167,7 @@ public class FunctionLiteral : IExpression
     
     public override string ToString()
     {
-        string str = "";
-        str += Token.Literal;
-        
-        IEnumerable<string> parameters = from p in Parameters select p.Value;
-        
-        str += "(";
-        str += string.Join(",", parameters) + ")";
-        
-        str += Body.ToString();
-        
-        return str;
+        return "fn (" + string.Join(",", Parameters.Select(x => x.ToString())) + ")" + Body;
     }
 }
 

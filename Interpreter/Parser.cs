@@ -117,6 +117,7 @@ public class Parser
         {
             TokenType.Let    => ParseLetStatement(),
             TokenType.Ident => PeekTokenIs(TokenType.Assign) ? ParseAssignStatement() : ParseExpressionStatement(),
+            TokenType.Function => ParseFunctionStatement(),
             TokenType.Return => ParseReturnStatement(),
             _                => ParseExpressionStatement()
         };
@@ -195,6 +196,30 @@ public class Parser
         }
         
         return new AssignStatement { Token = curToken, Name = name, Value = value };
+    }
+    
+    private FunctionStatement ParseFunctionStatement()
+    {
+        Token curToken = _curToken;
+        
+        ExpectPeek(TokenType.Ident);
+
+        Identifier name = new Identifier { Value = _curToken.Literal };
+        
+        ExpectPeek(TokenType.Lparen);
+        
+        List<Identifier> parameters = FunctionLiteralParslet.ParseFunctionParameters(this);
+        
+        ExpectPeek(TokenType.Lbrace);
+        
+        BlockStatement body = BlockStatementParslet.Parse(this);
+        
+        if (PeekTokenIs(TokenType.Semicolon))
+        {
+            NextToken();
+        }
+        
+        return new FunctionStatement { Token = curToken, Name = name, Body = body, Parameters = parameters };
     }
     
     private ReturnStatement ParseReturnStatement()
@@ -456,8 +481,8 @@ public class Parser
             
             return new FunctionLiteral { Token = token, Body = body, Parameters = parameters };
         }
-        
-        private static List<Identifier> ParseFunctionParameters(Parser parser)
+
+        internal static List<Identifier> ParseFunctionParameters(Parser parser)
         {
             var identifiers = new List<Identifier>();
             

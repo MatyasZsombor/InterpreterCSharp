@@ -1,19 +1,18 @@
-﻿let fibonacci = fn(x)
+﻿fn fibonacci(x)
 {
   let f = 0;
   let s = 1;
   
   return while (x > 0)
   {
-    let x = x - 1;
+    x = x - 1;
     let t = f;
     
-    let f = s;
-    let s = t + s;
+    f = s;
+    s = t + s;
     
     t;   
   };
-    
 };
 
 let y = get();
