@@ -82,31 +82,32 @@ public static class Repl
         Console.WriteLine("Feel free to type in commands");
         Environment environment = new Environment();
         Console.OutputEncoding = Encoding.UTF8;
+
+        ReadLine.HistoryEnabled = true;
         
         while (true)
         {
-            Console.Write("\u003E\u003E");
-            string input = Console.ReadLine()!;
-            
+            string input = ReadLine.Read(">> ");
+
             if (input is "exit" or "e")
             {
                 break;
             }
-            
+
             Lexer lexer = new Lexer(input);
             Parser parser = new Parser(lexer);
-            
+
             var program = parser.ParseCode();
-            
+
             if (parser.Errors.Count > 0)
             {
                 PrintParserErrors(parser);
+                continue;
             }
-            
+
             Evaluator evaluator = new Evaluator();
-            
             var evaluated = evaluator.Eval(program, environment);
-            
+
             Console.WriteLine(evaluated.Inspect());
         }
     }
