@@ -116,6 +116,7 @@ public class Parser
         _curToken.Type switch
         {
             TokenType.Let    => ParseLetStatement(),
+            TokenType.Ident => PeekTokenIs(TokenType.Assign) ? ParseAssignStatement() : ParseExpressionStatement(),
             TokenType.Return => ParseReturnStatement(),
             _                => ParseExpressionStatement()
         };
@@ -154,7 +155,7 @@ public class Parser
         return leftExp;
     }
     
-    private IStatement ParseLetStatement()
+    private LetStatement ParseLetStatement()
     {
         Token curToken = _curToken;
         
@@ -174,6 +175,26 @@ public class Parser
         }
         
         return new LetStatement { Token = curToken, Name = name, Value = value };
+    }
+    
+    private AssignStatement ParseAssignStatement()
+    {
+        Token curToken = _curToken;
+        
+        Identifier name = new Identifier { Token = _curToken, Value = _curToken.Literal };
+        
+        ExpectPeek(TokenType.Assign);
+        
+        NextToken();
+        
+        IExpression value = ParseExpression(BindingPower.Lowest);
+        
+        if (PeekTokenIs(TokenType.Semicolon))
+        {
+            NextToken();
+        }
+        
+        return new AssignStatement { Token = curToken, Name = name, Value = value };
     }
     
     private ReturnStatement ParseReturnStatement()

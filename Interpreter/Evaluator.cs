@@ -93,6 +93,25 @@ public class Evaluator
                 
                 break;
             
+            case AssignStatement assignStatement:
+                value = Eval(assignStatement.Value, environment);
+                
+                if (IsError(value))
+                {
+                    return value;
+                }
+                
+                if (environment.Get(assignStatement.Name.Value).Item2)
+                {
+                    environment.Set(assignStatement.Name.Value, value);
+                }
+                else
+                {
+                    return CreateError("identifier not declared in this scope: " + assignStatement.Name.Value);
+                }
+                
+                break;
+            
             case Identifier identifier:
                 return EvalIdentifier(identifier, environment, builtIns);
             

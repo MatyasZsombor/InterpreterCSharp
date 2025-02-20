@@ -36,7 +36,7 @@ public class Error : IEvObject
     
     public ObjectType Type() => ObjectType.Error;
     
-    public string Inspect() => "Error " + Message;
+    public string Inspect() => "Error: " + Message;
 }
 
 public class Integer : IEvObject

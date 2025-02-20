@@ -66,6 +66,17 @@ public class LetStatement : IStatement
     public override string ToString() => $"{TokenLiteral()} {Name} = {Value.ToString()}";
 }
 
+public class AssignStatement : IStatement
+{
+    public Token Token { get; init; }
+    public required Identifier Name { get; init; }
+    public required IExpression Value { get; init; }
+    
+    public string TokenLiteral() => Token.Literal;
+    
+    public override string ToString() => $"{Name} = {Value}";
+}
+
 public class ReturnStatement : IStatement
 {
     public Token Token { get; init; }
