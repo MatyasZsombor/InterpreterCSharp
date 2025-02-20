@@ -171,7 +171,7 @@ public class Lexer
     private string ReadIdentifier()
     {
         int position = _position;
-        while (char.IsLetter(_ch))
+        while (char.IsLetter(_ch) || _ch == '_' || char.IsDigit(_ch))
         {
             ReadChar();
         }
